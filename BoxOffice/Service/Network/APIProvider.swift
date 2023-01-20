@@ -2,14 +2,18 @@
 //  APIClient.swift
 //  BoxOffice
 //
-//  Created by 이원빈 on 2023/01/02.
+//  Created by 이원빈 on 2023/01/02. -> Refacted by Judy on 2023/01/20.
 //
 
 import Foundation
 
-struct APIClient {
-    static let shared = APIClient(sesseion: URLSession.shared)
+final class APIProvider {
+    static let shared = APIProvider(sesseion: URLSession.shared)
     private let session: URLSession
+    
+    private init(sesseion: URLSession) {
+        self.session = sesseion
+    }
     
     func requestData(with urlRequest: URLRequest) async throws -> Data {
         let (data, response) = try await session.data(for: urlRequest)
@@ -19,9 +23,5 @@ struct APIClient {
             
         }
         return data
-    }
-
-    init(sesseion: URLSession) {
-        self.session = sesseion
     }
 }
