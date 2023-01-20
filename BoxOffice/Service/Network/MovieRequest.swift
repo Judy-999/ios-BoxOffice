@@ -23,27 +23,34 @@ enum URLPath: String {
     case empty = ""
 }
 
-struct APIConfiguration {
-    private let baseUrl: String
-    private let paramList: [URLQueryItem]
-    private let path: String
-    private let httpMethod: String
+protocol APIRequest {
+    var httpMethod: String { get }
+    var baseURL: String { get }
+    var path: String { get }
+    var query: [URLQueryItem] { get }
+}
+
+struct MovieRequest: APIRequest {
+    let baseURL: String
+    let query: [URLQueryItem]
+    let path: String
+    let httpMethod: String
     
     init(
         baseUrl: BaseURL,
-        param: [String : Any],
+        query: [String : Any],
         path: URLPath = URLPath.empty,
         httpMethod: String = HTTPMethod.get
     ) {
-        self.baseUrl = baseUrl.rawValue
-        self.paramList = param.queryItems
+        self.baseURL = baseUrl.rawValue
+        self.query = query.queryItems
         self.path = path.rawValue
         self.httpMethod = httpMethod
     }
     
     func makeURLRequest() -> URLRequest? {
-        guard var urlComponent = URLComponents(string: baseUrl + path) else { return nil }
-        urlComponent.queryItems = paramList
+        guard var urlComponent = URLComponents(string: baseURL + path) else { return nil }
+        urlComponent.queryItems = query
         guard let url = urlComponent.url else { return nil }
         var request = URLRequest(url: url)
         request.httpMethod = httpMethod

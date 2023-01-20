@@ -16,13 +16,13 @@ enum WeekOption: String {
 struct SearchWeeklyBoxOfficeListAPI: API {
     typealias ResponseType = WeeklyBoxOfficeListResponseDTO
     
-    var configuration: APIConfiguration
+    var configuration: MovieRequest
     
     init(date: String, itemPerPage: String = "10", weekOption: WeekOption) {
         
-        self.configuration = APIConfiguration(
+        self.configuration = MovieRequest(
             baseUrl: .kobis,
-            param: ["key": Bundle.main.kobisApiKey,
+            query: ["key": Bundle.main.kobisApiKey,
                     "targetDt": date,
                     "weekGb": weekOption.rawValue,
                     "wideAreaCd": "0105001",

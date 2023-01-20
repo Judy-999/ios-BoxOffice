@@ -9,7 +9,7 @@ import Foundation
 
 protocol API {
     associatedtype ResponseType: Decodable
-    var configuration: APIConfiguration { get }
+    var configuration: MovieRequest { get }
 }
 
 extension API {

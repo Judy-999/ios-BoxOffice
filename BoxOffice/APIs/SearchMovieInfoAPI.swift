@@ -10,12 +10,12 @@ import Foundation
 struct SearchMovieInfoAPI: API {
     typealias ResponseType = MovieInfoResponseDTO
     
-    var configuration: APIConfiguration
+    var configuration: MovieRequest
     
     init(movieCode: String) {
-        self.configuration = APIConfiguration(
+        self.configuration = MovieRequest(
             baseUrl: .kobis,
-            param: ["key": Bundle.main.kobisApiKey,
+            query: ["key": Bundle.main.kobisApiKey,
                     "movieCd": movieCode],
             path: .movieInfo
         )

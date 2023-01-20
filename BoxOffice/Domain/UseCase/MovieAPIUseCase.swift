@@ -19,7 +19,7 @@ struct MovieAPIUseCase {
                 let movieEnglishName = movieInfo.movieNmEn
                 let movieOpenYear = String(movieInfo.openDt.prefix(4))
                 do {
-                    let posterURL1 = try await fetchMoviePosterURL(with: movieEnglishName, year: movieOpenYear)
+                    let posterURL1 = try await fetchMoviePosterURL(with: movieEnglishName, year: nil)
                     try await appendCellData(
                         to: dataList,
                         boxOffice: boxOffice,
@@ -48,7 +48,7 @@ struct MovieAPIUseCase {
                 let movieOpenYear = String(movieInfo.openDt.prefix(4))
                 
                 do {
-                    let posterURL1 = try await fetchMoviePosterURL(with: movieEnglishName, year: movieOpenYear)
+                    let posterURL1 = try await fetchMoviePosterURL(with: movieEnglishName, year: nil)
                     try await appendCellData(
                         to: dataList,
                         boxOffice: boxOffice,
@@ -77,7 +77,7 @@ struct MovieAPIUseCase {
                 let movieOpenYear = String(movieInfo.openDt.prefix(4))
                 
                 do {
-                    let posterURL1 = try await fetchMoviePosterURL(with: movieEnglishName, year: movieOpenYear)
+                    let posterURL1 = try await fetchMoviePosterURL(with: movieEnglishName, year: nil)
                     try await appendCellData(
                         to: dataList,
                         boxOffice: boxOffice,

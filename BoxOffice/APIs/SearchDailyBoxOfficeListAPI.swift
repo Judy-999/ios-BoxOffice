@@ -10,12 +10,12 @@ import Foundation
 struct SearchDailyBoxOfficeListAPI: API {
     typealias ResponseType = DailyBoxOfficeListResponseDTO
     
-    var configuration: APIConfiguration
+    var configuration: MovieRequest
     
     init(date: String, itemPerPage: String = "10") {
-        self.configuration = APIConfiguration(
+        self.configuration = MovieRequest(
             baseUrl: .kobis,
-            param: ["key": Bundle.main.kobisApiKey,
+            query: ["key": Bundle.main.kobisApiKey,
                     "targetDt": date,
                     "wideAreaCd": "0105001",
                     "itemPerPage": itemPerPage],

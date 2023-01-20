@@ -10,20 +10,20 @@ import Foundation
 struct SearchMoviePosterAPI: API {
     typealias ResponseType = MoviePosterResponseDTO
     
-    var configuration: APIConfiguration
+    var configuration: MovieRequest
     
     init(movieTitle: String, year: String? = nil) {
         if let year = year {
-            self.configuration = APIConfiguration(
+            self.configuration = MovieRequest(
                 baseUrl: .omdb,
-                param: ["apikey": Bundle.main.omdbApiKey,
+                query: ["apikey": Bundle.main.omdbApiKey,
                         "s": movieTitle,
                         "y": year]
             )
         } else {
-            self.configuration = APIConfiguration(
+            self.configuration = MovieRequest(
                 baseUrl: .omdb,
-                param: ["apikey": Bundle.main.omdbApiKey,
+                query: ["apikey": Bundle.main.omdbApiKey,
                         "s": movieTitle]
             )
         }
