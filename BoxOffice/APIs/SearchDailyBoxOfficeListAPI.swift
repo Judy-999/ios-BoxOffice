@@ -14,12 +14,13 @@ struct SearchDailyBoxOfficeListAPI: API {
     
     init(date: String, itemPerPage: String = "10") {
         self.configuration = MovieRequest(
-            baseUrl: .kobis,
+            baseURL: .kobis,
+            path: .dailyBoxOffice,
+            httpMethod: .get,
             query: ["key": Bundle.main.kobisApiKey,
                     "targetDt": date,
                     "wideAreaCd": "0105001",
-                    "itemPerPage": itemPerPage],
-            path: .dailyBoxOffice
+                    "itemPerPage": itemPerPage]
         )
     }
 }

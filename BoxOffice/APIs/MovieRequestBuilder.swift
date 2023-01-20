@@ -6,16 +6,13 @@
 //
 
 final class MovieRequestBuilder {
-    private var baseURL: BaseURL
-    private var httpMethod: String
-    private var path: URLPath
-    private var query: [String: Any]
+    private var baseURL: BaseURL?
+    private var httpMethod: HTTPMethod
+    private var path: URLPath?
+    private var query: [String: Any]?
     
-    private init(baseURL: BaseURL, httpMethod: String, path: URLPath, query: [String : Any]) {
-        self.baseURL = baseURL
+    init(_ httpMethod: HTTPMethod = .get) {
         self.httpMethod = httpMethod
-        self.path = path
-        self.query = query
     }
     
     func setBaseURL(_ url: BaseURL) -> MovieRequestBuilder  {
@@ -23,7 +20,7 @@ final class MovieRequestBuilder {
         return self
     }
     
-    func setMethod(_ method: String) -> MovieRequestBuilder {
+    func setMethod(_ method: HTTPMethod) -> MovieRequestBuilder {
         self.httpMethod = method
         return self
     }
@@ -39,9 +36,12 @@ final class MovieRequestBuilder {
     }
     
     func buildRequest() -> MovieRequest? {
-        return MovieRequest(baseUrl: baseURL,
-                            query: query,
+        guard let baseURL = baseURL,
+              let path = path else { return nil }
+        
+        return MovieRequest(baseURL: baseURL,
                             path: path,
-                            httpMethod: httpMethod)
+                            httpMethod: httpMethod,
+                            query: query)
     }
 }

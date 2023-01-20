@@ -21,13 +21,14 @@ struct SearchWeeklyBoxOfficeListAPI: API {
     init(date: String, itemPerPage: String = "10", weekOption: WeekOption) {
         
         self.configuration = MovieRequest(
-            baseUrl: .kobis,
+            baseURL: .kobis,
+            path: .weeklyBoxOffice,
+            httpMethod: .get,
             query: ["key": Bundle.main.kobisApiKey,
                     "targetDt": date,
                     "weekGb": weekOption.rawValue,
                     "wideAreaCd": "0105001",
-                    "itemPerPage": itemPerPage],
-            path: .weeklyBoxOffice
+                    "itemPerPage": itemPerPage]
         )
     }
 }

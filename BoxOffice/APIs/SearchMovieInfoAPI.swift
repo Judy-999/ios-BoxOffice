@@ -14,10 +14,11 @@ struct SearchMovieInfoAPI: API {
     
     init(movieCode: String) {
         self.configuration = MovieRequest(
-            baseUrl: .kobis,
+            baseURL: .kobis,
+            path: .movieInfo,
+            httpMethod: .get,
             query: ["key": Bundle.main.kobisApiKey,
-                    "movieCd": movieCode],
-            path: .movieInfo
+                    "movieCd": movieCode]
         )
     }
 }

@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum HTTPMethod {
-    static let get = "GET"
+enum HTTPMethod: String {
+    case get = "GET"
 }
 
 enum BaseURL: String {
@@ -24,36 +24,60 @@ enum URLPath: String {
 }
 
 protocol APIRequest {
-    var httpMethod: String { get }
-    var baseURL: String { get }
-    var path: String { get }
-    var query: [URLQueryItem] { get }
+    var baseURL: BaseURL { get }
+    var httpMethod: HTTPMethod { get }
+    var path: URLPath { get }
+    var query: [String : Any]? { get }
+}
+
+extension APIRequest {
+    var url: URL? {
+        var urlComponents = URLComponents(string: baseURL.rawValue + path.rawValue)
+        
+        if let query = query {
+            urlComponents?.queryItems = query.map {
+                URLQueryItem(name: $0.key,
+                             value: "\($0.value)")
+            }
+        }
+        
+        return urlComponents?.url
+    }
+    
+    var urlRequest: URLRequest? {
+        guard let url = url else { return nil }
+        
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = httpMethod.rawValue
+        
+        return urlRequest
+    }
 }
 
 struct MovieRequest: APIRequest {
-    let baseURL: String
-    let query: [URLQueryItem]
-    let path: String
-    let httpMethod: String
+    let baseURL: BaseURL
+    let path: URLPath
+    let httpMethod: HTTPMethod
+    let query: [String : Any]?
     
-    init(
-        baseUrl: BaseURL,
-        query: [String : Any],
-        path: URLPath = URLPath.empty,
-        httpMethod: String = HTTPMethod.get
-    ) {
-        self.baseURL = baseUrl.rawValue
-        self.query = query.queryItems
-        self.path = path.rawValue
-        self.httpMethod = httpMethod
-    }
+//    init(
+//        baseUrl: BaseURL,
+//        query: [String : Any],
+//        path: URLPath = URLPath.empty,
+//        httpMethod: String = HTTPMethod.get
+//    ) {
+//        self.baseURL = baseUrl.rawValue
+//        self.query = query.queryItems
+//        self.path = path.rawValue
+//        self.httpMethod = httpMethod
+//    }
     
     func makeURLRequest() -> URLRequest? {
-        guard var urlComponent = URLComponents(string: baseURL + path) else { return nil }
-        urlComponent.queryItems = query
+        guard var urlComponent = URLComponents(string: baseURL.rawValue + path.rawValue) else { return nil }
+//        urlComponent.queryItems = query
         guard let url = urlComponent.url else { return nil }
         var request = URLRequest(url: url)
-        request.httpMethod = httpMethod
+        request.httpMethod = httpMethod.rawValue
         return request
     }
 }

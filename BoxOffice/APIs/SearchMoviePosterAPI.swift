@@ -15,14 +15,18 @@ struct SearchMoviePosterAPI: API {
     init(movieTitle: String, year: String? = nil) {
         if let year = year {
             self.configuration = MovieRequest(
-                baseUrl: .omdb,
+                baseURL: .omdb,
+                path: .empty,
+                httpMethod: .get,
                 query: ["apikey": Bundle.main.omdbApiKey,
                         "s": movieTitle,
                         "y": year]
             )
         } else {
             self.configuration = MovieRequest(
-                baseUrl: .omdb,
+                baseURL: .omdb,
+                path: .empty,
+                httpMethod: .get,
                 query: ["apikey": Bundle.main.omdbApiKey,
                         "s": movieTitle]
             )
