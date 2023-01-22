@@ -2,7 +2,7 @@
 //  APIConfiguration.swift
 //  BoxOffice
 //
-//  Created by 이원빈 on 2023/01/02.
+//  Created by 이원빈 on 2023/01/02. -> Refacted by Judy on 2023/01/21.
 //
 
 import Foundation
@@ -60,21 +60,26 @@ struct MovieRequest: APIRequest {
     let httpMethod: HTTPMethod
     let query: [String : Any]?
     
-//    init(
-//        baseUrl: BaseURL,
-//        query: [String : Any],
-//        path: URLPath = URLPath.empty,
-//        httpMethod: String = HTTPMethod.get
-//    ) {
-//        self.baseURL = baseUrl.rawValue
-//        self.query = query.queryItems
-//        self.path = path.rawValue
-//        self.httpMethod = httpMethod
-//    }
+    init(
+        baseURL: BaseURL,
+        path: URLPath = URLPath.empty,
+        httpMethod: HTTPMethod = HTTPMethod.get,
+        query: [String : Any]?
+    ) {
+        self.baseURL = baseURL
+        self.query = query
+        self.path = path
+        self.httpMethod = httpMethod
+    }
     
     func makeURLRequest() -> URLRequest? {
         guard var urlComponent = URLComponents(string: baseURL.rawValue + path.rawValue) else { return nil }
-//        urlComponent.queryItems = query
+        if let query = query {
+            urlComponent.queryItems = query.map {
+                URLQueryItem(name: $0.key,
+                             value: "\($0.value)")
+            }
+        }
         guard let url = urlComponent.url else { return nil }
         var request = URLRequest(url: url)
         request.httpMethod = httpMethod.rawValue
