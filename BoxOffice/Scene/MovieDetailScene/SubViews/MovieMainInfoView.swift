@@ -66,15 +66,6 @@ final class MovieMainInfoView: UIView {
         return imageView
     }()
     
-    private let rankChangeLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.preferredFont(forTextStyle: .footnote)
-        label.layer.backgroundColor = UIColor.systemGreen.cgColor
-        label.layer.cornerRadius = 5
-        return label
-    }()
-    
     private let isNewEntryLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -110,6 +101,7 @@ final class MovieMainInfoView: UIView {
     private let openYearLabel = MovieLabel(font: .body)
     private let genreLabel = MovieLabel(font: .body)
     private let ratingLabel = MovieLabel(font: .largeTitle)
+    private let rankChangeLabel = RankChangeLabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -136,19 +128,15 @@ final class MovieMainInfoView: UIView {
         ratingLabel.text = rating == "nan" ? "정보 없음" : rating
         titleLabel.text = movie.title
         currentRankLabel.text = movie.currentRank
-        setRankChangeLabel(with: movie.rankChange)
+        setupRankChangeLabel(with: movie.rankChange)
         setIsNewEntryLabel(with: movie.isNewEntry)
         openYearLabel.text = movie.openYear + " • "
         genreLabel.text = movie.genreName
     }
     
-    private func setRankChangeLabel(with rankChange: String) {
-        if Int(rankChange) ?? 0 > 0 {
-            rankChangeLabel.text = "  " + rankChange + "▲" + "  "
-            rankChangeLabel.layer.backgroundColor = UIColor.systemGreen.cgColor
-        } else if Int(rankChange) ?? 0 < 0 {
-            rankChangeLabel.text = "  " + rankChange + "▼" + "  "
-            rankChangeLabel.layer.backgroundColor = UIColor.systemRed.cgColor
+    private func setupRankChangeLabel(with rankChange: String) {
+        if let change = Int(rankChange), change != .zero {
+            rankChangeLabel.setupRank(change)
         } else {
             rankChangeLabel.isHidden = true
         }

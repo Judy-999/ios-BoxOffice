@@ -53,15 +53,6 @@ final class GridCell: UICollectionViewCell {
         return stackView
     }()
     
-    private let rankChangeBadgeLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.preferredFont(forTextStyle: .footnote)
-        label.layer.backgroundColor = UIColor.systemGreen.cgColor
-        label.layer.cornerRadius = 5
-        return label
-    }()
-    
     private let newEntryBadgeLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -105,6 +96,7 @@ final class GridCell: UICollectionViewCell {
     }()
     
     private let currentRanklabel = MovieLabel(font: .largeTitle, isBold: true)
+    private let rankChangeLabel = RankChangeLabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -121,7 +113,7 @@ final class GridCell: UICollectionViewCell {
         titleLabel.text = data.title
         currentRanklabel.text = data.currentRank
         setOpenDateLabel(with: data.openDate)
-        setRankChangeLabel(with: data.rankChange)
+        setupRankChangeLabel(with: data.rankChange)
         setTotalAudiencesCountLabel(with: data.totalAudience)
         setNewEntryBadgeLabel(with: data.isNewEntry)
         setPosterImageView(with: data.poster)
@@ -138,15 +130,11 @@ final class GridCell: UICollectionViewCell {
         openDateLabel.text = date
     }
     
-    private func setRankChangeLabel(with rankChange: String) {
-        if Int(rankChange) ?? 0 > 0 {
-            rankChangeBadgeLabel.text = "  " + rankChange + "▲" + "  "
-            rankChangeBadgeLabel.layer.backgroundColor = UIColor.systemGreen.cgColor
-        } else if Int(rankChange) ?? 0 < 0 {
-            rankChangeBadgeLabel.text = "  " + rankChange + "▼" + "  "
-            rankChangeBadgeLabel.layer.backgroundColor = UIColor.systemRed.cgColor
+    private func setupRankChangeLabel(with rankChange: String) {
+        if let change = Int(rankChange), change != .zero {
+            rankChangeLabel.setupRank(change)
         } else {
-            rankChangeBadgeLabel.isHidden = true
+            rankChangeLabel.isHidden = true
         }
     }
     
@@ -174,7 +162,7 @@ final class GridCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        rankChangeBadgeLabel.isHidden = false
+        rankChangeLabel.isHidden = false
         posterImageView.image = UIImage(systemName: "nosign")
         posterImageView.backgroundColor = nil
     }
@@ -188,7 +176,7 @@ private extension GridCell {
         mainStackView.addArrangedSubview(infoStackView)
         infoStackView.addArrangedSubview(titleLabel)
         infoStackView.addArrangedSubview(badgeStackView)
-        badgeStackView.addArrangedSubview(rankChangeBadgeLabel)
+        badgeStackView.addArrangedSubview(rankChangeLabel)
         badgeStackView.addArrangedSubview(newEntryBadgeLabel)
         infoStackView.addArrangedSubview(totalAudiencesCountLabel)
         infoStackView.addArrangedSubview(openDateLabel)
