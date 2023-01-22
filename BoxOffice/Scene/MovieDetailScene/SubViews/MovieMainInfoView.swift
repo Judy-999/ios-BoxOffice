@@ -18,9 +18,8 @@ final class MovieMainInfoView: UIView {
     private let openYearStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.spacing = 0
         stackView.alignment = .top
-        stackView.setContentHuggingPriority(UILayoutPriority(200), for: .vertical)
+        stackView.setContentHuggingPriority(.defaultLow, for: .vertical)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -28,7 +27,7 @@ final class MovieMainInfoView: UIView {
     private let ratingStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.setContentCompressionResistancePriority(UILayoutPriority(900), for: .vertical)
+        stackView.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -85,16 +84,29 @@ final class MovieMainInfoView: UIView {
         return label
     }()
     
-    private let rankBackgroundView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .black
-        view.alpha = 0.5
-        return view
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .title1)
+        label.font = .boldSystemFont(ofSize: label.font.pointSize)
+        label.numberOfLines = 0
+        label.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        label.adjustsFontSizeToFitWidth = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
-    private let currentRanklabel = MovieLabel(font: .largeTitle, isBold: true)
-    private let titleLabel = MovieLabel(font: .title1, isBold: true)
+    private let currentRankLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .largeTitle)
+        label.font = .boldSystemFont(ofSize: label.font.pointSize)
+        label.textColor = .white
+        label.backgroundColor = .black
+        label.textAlignment = .center
+        label.alpha = 0.8
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     private let openYearLabel = MovieLabel(font: .body)
     private let genreLabel = MovieLabel(font: .body)
     private let ratingLabel = MovieLabel(font: .largeTitle)
@@ -123,7 +135,7 @@ final class MovieMainInfoView: UIView {
         posterView.image = movie.poster
         ratingLabel.text = rating == "nan" ? "정보 없음" : rating
         titleLabel.text = movie.title
-        currentRanklabel.text = movie.currentRank
+        currentRankLabel.text = movie.currentRank
         setRankChangeLabel(with: movie.rankChange)
         setIsNewEntryLabel(with: movie.isNewEntry)
         openYearLabel.text = movie.openYear + " • "
@@ -153,10 +165,6 @@ final class MovieMainInfoView: UIView {
     private func setupView() {
         addSubView()
         setupConstraint()
-        titleLabel.numberOfLines = 0
-        titleLabel.setContentHuggingPriority(UILayoutPriority(900), for: .vertical)
-        titleLabel.adjustsFontSizeToFitWidth = true
-        currentRanklabel.textColor = .white
         self.backgroundColor = .systemBackground
     }
     
@@ -179,19 +187,15 @@ final class MovieMainInfoView: UIView {
         entireStackView.addArrangedSubview(infoStackView)
         
         self.addSubview(entireStackView)
-        addSubview(rankBackgroundView)
-        rankBackgroundView.addSubview(currentRanklabel)
+        self.addSubview(currentRankLabel)
     }
 
     private func setupConstraint() {
         NSLayoutConstraint.activate([
-            currentRanklabel.centerXAnchor.constraint(equalTo: rankBackgroundView.centerXAnchor),
-            currentRanklabel.centerYAnchor.constraint(equalTo: rankBackgroundView.centerYAnchor),
-            
-            rankBackgroundView.topAnchor.constraint(equalTo: posterView.topAnchor),
-            rankBackgroundView.leadingAnchor.constraint(equalTo: posterView.leadingAnchor),
-            rankBackgroundView.widthAnchor.constraint(equalTo: posterView.widthAnchor, multiplier: 0.2),
-            rankBackgroundView.heightAnchor.constraint(equalTo: rankBackgroundView.widthAnchor),
+            currentRankLabel.topAnchor.constraint(equalTo: posterView.topAnchor),
+            currentRankLabel.leadingAnchor.constraint(equalTo: posterView.leadingAnchor),
+            currentRankLabel.widthAnchor.constraint(equalTo: posterView.widthAnchor, multiplier: 1/5),
+            currentRankLabel.heightAnchor.constraint(equalTo: currentRankLabel.widthAnchor),
             
             entireStackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
                                                  constant: 8),
@@ -203,7 +207,7 @@ final class MovieMainInfoView: UIView {
                                                       constant: -16),
             
             posterView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor,
-                                              multiplier: 4/10),
+                                              multiplier: 2/5),
             starView.widthAnchor.constraint(equalTo: starView.heightAnchor)
         ])
     }
