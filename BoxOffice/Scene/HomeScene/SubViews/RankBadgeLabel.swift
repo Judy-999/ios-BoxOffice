@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class RankChangeLabel: UILabel {
+final class RankBadgeLabel: UILabel {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupLabel()
@@ -26,6 +26,14 @@ final class RankChangeLabel: UILabel {
             self.text = "  \(abs(rankChange))▼  "
             self.layer.backgroundColor = UIColor.systemRed.cgColor
         }
+    }
+    
+    func setupEntryInfo(with isNewEntry: Bool) {
+        if isNewEntry {
+            self.text = " 신규진입 "
+        }
+        
+        self.layer.backgroundColor = UIColor.systemYellow.cgColor
     }
     
     private func setupLabel() {

@@ -66,15 +66,6 @@ final class MovieMainInfoView: UIView {
         return imageView
     }()
     
-    private let isNewEntryLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.preferredFont(forTextStyle: .footnote)
-        label.layer.backgroundColor = UIColor.systemYellow.cgColor
-        label.layer.cornerRadius = 5
-        return label
-    }()
-    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .title1)
@@ -101,7 +92,8 @@ final class MovieMainInfoView: UIView {
     private let openYearLabel = MovieLabel(font: .body)
     private let genreLabel = MovieLabel(font: .body)
     private let ratingLabel = MovieLabel(font: .largeTitle)
-    private let rankChangeLabel = RankChangeLabel()
+    private let rankChangeBandgeLabel = RankBadgeLabel()
+    private let newEntryBadgeLabel = RankBadgeLabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -129,24 +121,17 @@ final class MovieMainInfoView: UIView {
         titleLabel.text = movie.title
         currentRankLabel.text = movie.currentRank
         setupRankChangeLabel(with: movie.rankChange)
-        setIsNewEntryLabel(with: movie.isNewEntry)
+        newEntryBadgeLabel.setupEntryInfo(with: movie.isNewEntry)
         openYearLabel.text = movie.openYear + " • "
         genreLabel.text = movie.genreName
     }
     
     private func setupRankChangeLabel(with rankChange: String) {
+        // TODO: 애초에 Int로 받아와도 되지 않나? 아닌가
         if let change = Int(rankChange), change != .zero {
-            rankChangeLabel.setupRank(change)
+            rankChangeBandgeLabel.setupRank(change)
         } else {
-            rankChangeLabel.isHidden = true
-        }
-    }
-    
-    private func setIsNewEntryLabel(with isNewEntry: Bool) {
-        if isNewEntry {
-            isNewEntryLabel.text = " 신규진입 "
-        } else {
-            isNewEntryLabel.text = ""
+            rankChangeBandgeLabel.isHidden = true
         }
     }
     
@@ -157,8 +142,8 @@ final class MovieMainInfoView: UIView {
     }
     
     private func addSubView() {
-        rankStackView.addArrangedSubview(rankChangeLabel)
-        rankStackView.addArrangedSubview(isNewEntryLabel)
+        rankStackView.addArrangedSubview(rankChangeBandgeLabel)
+        rankStackView.addArrangedSubview(newEntryBadgeLabel)
         
         openYearStackView.addArrangedSubview(openYearLabel)
         openYearStackView.addArrangedSubview(genreLabel)
