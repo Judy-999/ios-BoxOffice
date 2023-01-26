@@ -164,17 +164,20 @@ final class ListCell: UICollectionViewCell {
 // MARK: Setup Layout
 private extension ListCell {
     func addSubViews() {
-        addSubview(mainStackView)
-        mainStackView.addArrangedSubview(posterImageView)
-        mainStackView.addArrangedSubview(rankLabel)
-        mainStackView.addArrangedSubview(infoStackView)
-        infoStackView.addArrangedSubview(titleLabel)
-        infoStackView.addArrangedSubview(badgeStackView)
         badgeStackView.addArrangedSubview(rankChangeBandgeLabel)
         badgeStackView.addArrangedSubview(newEntryBadgeLabel)
+        
+        infoStackView.addArrangedSubview(titleLabel)
+        infoStackView.addArrangedSubview(badgeStackView)
         infoStackView.addArrangedSubview(fakeView)
         infoStackView.addArrangedSubview(totalAudiencesCountLabel)
         infoStackView.addArrangedSubview(openDateLabel)
+        
+        mainStackView.addArrangedSubview(posterImageView)
+        mainStackView.addArrangedSubview(rankLabel)
+        mainStackView.addArrangedSubview(infoStackView)
+        
+        addSubview(mainStackView)
     }
     
     func setupLayout() {

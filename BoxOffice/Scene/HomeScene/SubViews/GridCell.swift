@@ -40,7 +40,6 @@ final class GridCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.preferredFont(forTextStyle: .title2)
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 1
         label.setContentHuggingPriority(UILayoutPriority(100), for: .vertical)
         return label
     }()
@@ -68,15 +67,7 @@ final class GridCell: UICollectionViewCell {
         label.font = UIFont.preferredFont(forTextStyle: .callout)
         return label
     }()
-    
-    private let rankBackgroundView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .black
-        view.alpha = 0.5
-        return view
-    }()
-    
+
     private let fakeView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -85,14 +76,24 @@ final class GridCell: UICollectionViewCell {
         view.setContentHuggingPriority(.init(100), for: .vertical)
         return view
     }()
-    
-    private let currentRanklabel = MovieLabel(font: .largeTitle, isBold: true)
+
+    private let currentRankLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .largeTitle)
+        label.font = .boldSystemFont(ofSize: label.font.pointSize)
+        label.textColor = .white
+        label.backgroundColor = .black
+        label.textAlignment = .center
+        label.alpha = 0.8
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     private let rankChangeBandgeLabel = RankBadgeLabel()
     private let newEntryBadgeLabel = RankBadgeLabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        currentRanklabel.textColor = .white
         addSubViews()
         setupLayout()
     }
@@ -103,7 +104,7 @@ final class GridCell: UICollectionViewCell {
     
     func setup(with data: MovieData) {
         titleLabel.text = data.title
-        currentRanklabel.text = data.currentRank
+        currentRankLabel.text = data.currentRank
         setOpenDateLabel(with: data.openDate)
         setupRankChangeLabel(with: data.rankChange)
         setTotalAudiencesCountLabel(with: data.totalAudience)
@@ -155,19 +156,20 @@ final class GridCell: UICollectionViewCell {
 // MARK: Setup Layout
 private extension GridCell {
     func addSubViews() {
-        addSubview(mainStackView)
-        mainStackView.addArrangedSubview(posterImageView)
-        mainStackView.addArrangedSubview(infoStackView)
-        infoStackView.addArrangedSubview(titleLabel)
-        infoStackView.addArrangedSubview(badgeStackView)
         badgeStackView.addArrangedSubview(rankChangeBandgeLabel)
         badgeStackView.addArrangedSubview(newEntryBadgeLabel)
+        
+        infoStackView.addArrangedSubview(titleLabel)
+        infoStackView.addArrangedSubview(badgeStackView)
         infoStackView.addArrangedSubview(totalAudiencesCountLabel)
         infoStackView.addArrangedSubview(openDateLabel)
         infoStackView.addArrangedSubview(fakeView)
         
-        addSubview(rankBackgroundView)
-        rankBackgroundView.addSubview(currentRanklabel)
+        mainStackView.addArrangedSubview(posterImageView)
+        mainStackView.addArrangedSubview(infoStackView)
+        
+        addSubview(mainStackView)
+        addSubview(currentRankLabel)
     }
     
     func setupLayout() {
@@ -177,15 +179,12 @@ private extension GridCell {
             mainStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             mainStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            currentRanklabel.centerXAnchor.constraint(equalTo: rankBackgroundView.centerXAnchor),
-            currentRanklabel.centerYAnchor.constraint(equalTo: rankBackgroundView.centerYAnchor),
+            currentRankLabel.topAnchor.constraint(equalTo: posterImageView.topAnchor),
+            currentRankLabel.leadingAnchor.constraint(equalTo: posterImageView.leadingAnchor),
+            currentRankLabel.widthAnchor.constraint(equalTo: posterImageView.widthAnchor, multiplier: 1/5),
+            currentRankLabel.heightAnchor.constraint(equalTo: currentRankLabel.widthAnchor),
             
-            rankBackgroundView.topAnchor.constraint(equalTo: posterImageView.topAnchor),
-            rankBackgroundView.leadingAnchor.constraint(equalTo: posterImageView.leadingAnchor),
-            rankBackgroundView.widthAnchor.constraint(equalTo: posterImageView.widthAnchor, multiplier: 0.2),
-            rankBackgroundView.heightAnchor.constraint(equalTo: rankBackgroundView.widthAnchor),
-            
-            posterImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.7),
+            posterImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 7/10),
             posterImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
     }
