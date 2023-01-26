@@ -11,9 +11,7 @@ final class MovieSubInfoView: UIView {
     private let infoStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.spacing = 8
-        stackView.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        stackView.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
+        stackView.spacing = 5
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -21,6 +19,7 @@ final class MovieSubInfoView: UIView {
     private let actorStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
+        stackView.spacing = 5
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -33,29 +32,27 @@ final class MovieSubInfoView: UIView {
         return stackView
     }()
     
+    private let subInfoStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
     private let moreActorsButton: UIButton = {
         let button = UIButton()
         button.setTitle("더보기", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        button.setContentCompressionResistancePriority(UILayoutPriority(1000), for: .horizontal)
+        button.setTitleColor(.systemGray, for: .normal)
+        button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
-    private let fakeView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.widthAnchor.constraint(greaterThanOrEqualToConstant: 10).isActive = true
-        view.heightAnchor.constraint(greaterThanOrEqualToConstant: 10).isActive = true
-        view.setContentHuggingPriority(.init(100), for: .horizontal)
-        return view
-    }()
-    
-    private let productionYearLabel = MovieLabel(font: .title3, isBold: true)
-    private var ageLimitLabel = MovieLabel(font: .title3, isBold: true)
-    private let showTimeLabel = MovieLabel(font: .title3, isBold: true)
-    private let totalAudienceLabel = MovieLabel(font: .title3, isBold: true)
+    private let productionYearLabel = MovieLabel(font: .title3)
+    private var ageLimitLabel = MovieLabel(font: .title3)
+    private let showTimeLabel = MovieLabel(font: .title3)
+    private let totalAudienceLabel = MovieLabel(font: .title3)
     private let directorNameLabel = MovieLabel(font: .body)
     private let actorsLabel = MovieLabel(font: .body)
     
@@ -89,8 +86,8 @@ final class MovieSubInfoView: UIView {
         }
         
         productionYearLabel.text = movie.productionYear
-        showTimeLabel.text = " " + movie.showTime + "분"
-        totalAudienceLabel.text = " " + movie.totalAudience.toDecimal() + "명 관람"
+        showTimeLabel.text = movie.showTime + "분"
+        totalAudienceLabel.text = movie.totalAudience.toDecimal() + "명 관람"
         directorNameLabel.text = "감독: " + movie.directorName
         actorsLabel.text =  "출연: " + movie.actors.joined(separator: ", ")
     }
@@ -104,8 +101,11 @@ final class MovieSubInfoView: UIView {
     private func setupView() {
         addSubView()
         setupConstraint()
-        totalAudienceLabel.setContentHuggingPriority(UILayoutPriority(200), for: .horizontal)
         totalAudienceLabel.adjustsFontSizeToFitWidth = true
+        
+        directorNameLabel.textColor = .systemGray
+        actorsLabel.textColor = .systemGray
+        
         self.backgroundColor = .systemBackground
     }
     
@@ -114,28 +114,30 @@ final class MovieSubInfoView: UIView {
         infoStackView.addArrangedSubview(ageLimitLabel)
         infoStackView.addArrangedSubview(showTimeLabel)
         infoStackView.addArrangedSubview(totalAudienceLabel)
-        infoStackView.addArrangedSubview(fakeView)
+        
+        subInfoStackView.addArrangedSubview(directorNameLabel)
+        subInfoStackView.addArrangedSubview(actorStackView)
         
         actorStackView.addArrangedSubview(actorsLabel)
         actorStackView.addArrangedSubview(moreActorsButton)
 
         entireStackView.addArrangedSubview(infoStackView)
-        entireStackView.addArrangedSubview(directorNameLabel)
-        entireStackView.addArrangedSubview(actorStackView)
+        entireStackView.addArrangedSubview(subInfoStackView)
         
         self.addSubview(entireStackView)
     }
     
     private func setupConstraint() {
+        actorsLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        totalAudienceLabel.setContentHuggingPriority(UILayoutPriority(200), for: .horizontal)
+        
         NSLayoutConstraint.activate([
-            entireStackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor,
-                                                 constant: 8),
-            entireStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor,
-                                                 constant: -8),
             entireStackView.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor,
                                                  constant: 16),
             entireStackView.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor,
-                                                 constant: -16)
+                                                 constant: -16),
+            
+            entireStackView.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor)
         ])
     }
 }
