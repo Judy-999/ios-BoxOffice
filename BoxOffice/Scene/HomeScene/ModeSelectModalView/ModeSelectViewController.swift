@@ -13,17 +13,28 @@ protocol ModeSelectViewControllerDelegate: AnyObject {
 
 final class ModeSelectViewController: UIViewController {
     weak var delegate: ModeSelectViewControllerDelegate?
-    private let passedMode: BoxOfficeMode
+    private let currentMode: BoxOfficeMode
     private let customTransitioningDelegate = ModeSelectTransitioningDelegate()
-    private let navigationBar = UINavigationBar(frame: .zero)
+    
+    private let navigationBar: UINavigationBar = {
+        let navigationBar = UINavigationBar(frame: .zero)
+        navigationBar.translatesAutoresizingMaskIntoConstraints = false
+        navigationBar.isTranslucent = false
+        navigationBar.backgroundColor = .systemBackground
+        return navigationBar
+    }()
+    
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.isScrollEnabled = false
+        tableView.register(ModeSelectCell.self,
+                           forCellReuseIdentifier: "modalCell")
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
     init(passMode: BoxOfficeMode) {
-        self.passedMode = passMode
+        self.currentMode = passMode
         super.init(nibName: nil, bundle: nil)
         setupModalStyle()
     }
@@ -34,11 +45,7 @@ final class ModeSelectViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupInitialView()
-        setupNavigationBar()
-        layoutNavigationBar()
-        setupTableView()
-        layoutTableView()
+        setupView()
     }
     
     private func setupModalStyle() {
@@ -54,24 +61,17 @@ final class ModeSelectViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        navigationBar.translatesAutoresizingMaskIntoConstraints = false
-        navigationBar.isTranslucent = false
-        navigationBar.backgroundColor = .systemBackground
-
-        let naviItem = UINavigationItem(title: "보기 모드")
-        naviItem.leftBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .close,
-            target: self,
-            action: #selector(dismissView)
-        )
-        navigationBar.items = [naviItem]
+        let navigationItem = UINavigationItem(title: "보기 모드")
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close,
+                                                     target: self,
+                                                     action: #selector(dismissView))
+        navigationBar.items = [navigationItem]
     }
     
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(ModeSelectCell.self,
-                           forCellReuseIdentifier: "modalCell")
+        tableView.rowHeight = view.bounds.height / 15
     }
     
     @objc private func dismissView() {
@@ -80,32 +80,22 @@ final class ModeSelectViewController: UIViewController {
 }
 
 extension ModeSelectViewController: UITableViewDelegate, UITableViewDataSource {
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
+        return BoxOfficeMode.allCases.count
     }
     
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: "modalCell",
-            for: indexPath
-        ) as? ModeSelectCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "modalCell",
+                                                       for: indexPath) as? ModeSelectCell else {
             return UITableViewCell(style: .default, reuseIdentifier: .none)
         }
-        let modeName = BoxOfficeMode.allCases[indexPath.row]
         
-        cell.setup(label: modeName.rawValue, isChecked: passedMode == modeName)
+        let mode = BoxOfficeMode.allCases[indexPath.row]
+        
+        cell.setup(label: mode.title, isChecked: currentMode == mode)
         return cell
-    }
-    
-    func tableView(_ tableView: UITableView,
-                   heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
     }
     
     func tableView(_ tableView: UITableView,
@@ -113,26 +103,30 @@ extension ModeSelectViewController: UITableViewDelegate, UITableViewDataSource {
         Task {
             try await delegate?.didSelectedRowAt(indexPath: indexPath.row)
         }
-        dismiss(animated: true)
+        
+        dismissView()
     }
 }
 
 // MARK: Setup Layout
-private extension ModeSelectViewController {
-    func layoutNavigationBar() {
+extension ModeSelectViewController {
+    private func setupView() {
+        setupInitialView()
+        setupNavigationBar()
+        setupLayout()
+        setupTableView()
+    }
+    
+    private func setupLayout() {
         view.addSubview(navigationBar)
+        view.addSubview(tableView)
+        
         NSLayoutConstraint.activate([
             navigationBar.topAnchor.constraint(equalTo: view.topAnchor),
             navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navigationBar.heightAnchor.constraint(equalToConstant: 60),
-        ])
-    }
-    
-    func layoutTableView() {
-        view.addSubview(tableView)
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+      
+            tableView.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
