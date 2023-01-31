@@ -180,31 +180,31 @@ final class HomeCollectionView: UICollectionView {
     }
     
     func appendDailySnapshot(with cellDatas: [MovieData]) {
-        guard cellDatas.count > 0 else { return }
+        guard cellDatas.count == 10 else { return }
         snapshot.appendItems(cellDatas)
         homeDataSource?.apply(snapshot, animatingDifferences: true)
     }
     
     func appendAllWeekSnapshot(data: [MovieData]) {
-        guard data.count > 0 else { return }
+        guard data.count == 10 else { return }
         snapshot.appendItems(data, toSection: .allWeek)
         homeDataSource?.apply(snapshot, animatingDifferences: true)
     }
     
     func appendWeekEndSnapshot(data: [MovieData]) {
-        guard data.count > 0 else { return }
+        guard data.count == 10 else { return }
         snapshot.appendItems(data, toSection: .weekEnd)
         homeDataSource?.apply(snapshot, animatingDifferences: true)
     }
     
     func switchMode(_ mode: BoxOfficeMode){
-        if mode == .daily {
-            switchLayout(to: .daily)
-            currentViewMode = .daily
+        switchLayout(to: mode)
+        currentViewMode = mode
+        
+        switch mode {
+        case .daily:
             configureDataSource(with: createDailyCellRegistration())
-        } else {
-            switchLayout(to: .weekly)
-            currentViewMode = .weekly
+        case .weekly:
             configureDataSource(with: createWeeklyCellRegistration())
         }
     }

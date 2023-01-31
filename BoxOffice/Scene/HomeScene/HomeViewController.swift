@@ -7,9 +7,18 @@
 
 import UIKit
 
-enum BoxOfficeMode: String, CaseIterable {
-    case daily = "일별 박스오피스"
-    case weekly = "주간/주말 박스오피스"
+enum BoxOfficeMode: Int, CaseIterable {
+    case daily
+    case weekly
+    
+    var title: String {
+        switch self {
+        case .daily:
+            return  "일별 박스오피스"
+        case .weekly:
+            return "주간/주말 박스오피스"
+        }
+    }
 }
 
 final class HomeViewController: UIViewController {
@@ -19,7 +28,7 @@ final class HomeViewController: UIViewController {
     private let viewModeChangeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(BoxOfficeMode.daily.rawValue, for: .normal)
+        button.setTitle("▼ " + BoxOfficeMode.daily.title, for: .normal)
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .callout)
         button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .systemGray5
@@ -155,12 +164,13 @@ final class HomeViewController: UIViewController {
 extension HomeViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if viewMode == .daily {
+        switch viewMode {
+        case .daily:
             pushMovieDetail(
                 in: homeViewModel.dailyMovieCellDatas.value,
                 at: indexPath.row
             )
-        } else {
+        case .weekly:
             if indexPath.section == 0 {
                 pushMovieDetail(
                     in: homeViewModel.allWeekMovieCellDatas.value,
@@ -200,14 +210,19 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 extension HomeViewController: ModeSelectViewControllerDelegate {
     func didSelectedRowAt(indexPath: Int) async throws {
         activityIndicator.startAnimating()
-        let mode = BoxOfficeMode.allCases[indexPath]
-        viewModeChangeButton.setTitle("▼ \(mode.rawValue)", for: .normal)
+        
+        guard let mode = BoxOfficeMode(rawValue: indexPath) else { return }
+                
+        viewModeChangeButton.setTitle("▼ \(mode.title)", for: .normal)
+        
         let dateText = searchingDate.toString()
-        if mode == .daily {
-            self.homeCollectionView.switchMode(.daily)
+        
+        switch mode {
+        case .daily:
+            homeCollectionView.switchMode(.daily)
             try await homeViewModel.requestDailyData(with: dateText)
-        } else {
-            self.homeCollectionView.switchMode(.weekly)
+        case .weekly:
+            homeCollectionView.switchMode(.weekly)
             Task {
                 try await homeViewModel.requestAllWeekData(with: dateText)
             }
