@@ -28,12 +28,17 @@ final class DefaultHomeViewModel: HomeViewModel {
     var weekEndMovieCellDatas = Observable<[MovieData]>([])
     
     func requestDailyData(with date: String) async throws {
-        try await movieAPIUseCase.requestDailyData(with: date, in: dailyMovieCellDatas)
+        try await movieAPIUseCase.requestDailyData(with: date,
+                                                   in: dailyMovieCellDatas)
     }
+    
     func requestAllWeekData(with date: String) async throws {
-        try await movieAPIUseCase.requestAllWeekData(with: date, in: allWeekMovieCellDatas)
+        try await movieAPIUseCase.requestAllWeekData(with: date,
+                                                     in: allWeekMovieCellDatas)
     }
+    
     func requestWeekEndData(with date: String) async throws {
-        try await movieAPIUseCase.requestWeekEndData(with: date, in: weekEndMovieCellDatas)
+        try await movieAPIUseCase.requestWeekEndData(with: date,
+                                                     in: weekEndMovieCellDatas)
     }
 }

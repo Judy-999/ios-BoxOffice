@@ -19,7 +19,7 @@ final class HomeViewController: UIViewController {
     private let viewModeChangeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("▼ 일별 박스오피스", for: .normal)
+        button.setTitle(BoxOfficeMode.daily.rawValue, for: .normal)
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .callout)
         button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .systemGray5
@@ -28,7 +28,7 @@ final class HomeViewController: UIViewController {
     }()
     
     private var viewMode: BoxOfficeMode {
-        if viewModeChangeButton.currentTitle == "▼ 일별 박스오피스" {
+        if viewModeChangeButton.currentTitle == MovieInformation.dailyBoxOfficeTitle {
             return BoxOfficeMode.daily
         } else {
             return BoxOfficeMode.weekly
@@ -43,18 +43,25 @@ final class HomeViewController: UIViewController {
         indicator.translatesAutoresizingMaskIntoConstraints = false
         return indicator
     }()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        Task {
+            try await requestInitialData()
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupView()
+        bind()
+    }
+    
+    private func setupView() {
         setupInitialView()
         setupNavigationBar()
         setupCollectionView()
         setupButton()
-        setupViewModel()
-        Task {
-            try await requestInitialData()
-        }
-        activityIndicator.startAnimating()
     }
     
     private func setupInitialView() {
@@ -64,63 +71,60 @@ final class HomeViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        navigationItem.title = "영화목록"
-        let calendarButton = UIBarButtonItem(
-            image: UIImage(systemName: "calendar"),
-            style: .done,
-            target: self,
-            action: #selector(calendarButtonTapped)
-        )
-        navigationItem.rightBarButtonItem = calendarButton
+        let calendarBarButton = UIBarButtonItem(image: MovieInformation.Image.calendar,
+                                             style: .done,
+                                             target: self,
+                                             action: #selector(calendarButtonTapped))
+        
+        navigationItem.rightBarButtonItem = calendarBarButton
+        navigationItem.title = MovieInformation.mainviewTitle
     }
     
     private func setupCollectionView() {
         homeCollectionView.translatesAutoresizingMaskIntoConstraints = false
         homeCollectionView.delegate = self
-        homeCollectionView.register(
-            HeaderView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "headerView"
-        )
+        homeCollectionView.register(HeaderView.self,
+                                    forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                                    withReuseIdentifier: "headerView")
     }
     
     private func setupButton() {
-        viewModeChangeButton.addTarget(
-            self,
-            action: #selector(viewModeChangeButtonTapped),
-            for: .touchUpInside
-        )
+        viewModeChangeButton.addTarget(self,
+                                       action: #selector(viewModeChangeButtonTapped),
+                                       for: .touchUpInside)
     }
     
-    private func setupViewModel() {
-        homeViewModel.dailyMovieCellDatas.bind { cellDatas in
-            guard cellDatas.count == 10 else { return }
-            let rankSortedCellDatas = cellDatas.sorted { a, b in
-                Int(a.currentRank) ?? 0 < Int(b.currentRank) ?? 0
+    private func bind() {
+        homeViewModel.dailyMovieCellDatas.bind { [weak self] cellDatas in
+            let rankSortedCellDatas = cellDatas.sorted {
+                Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
             }
+            
             DispatchQueue.main.async {
-                self.homeCollectionView.appendDailySnapshot(with: rankSortedCellDatas)
-                self.activityIndicator.stopAnimating()
+                self?.homeCollectionView.appendDailySnapshot(with: rankSortedCellDatas)
+                self?.activityIndicator.stopAnimating()
             }
         }
-        homeViewModel.allWeekMovieCellDatas.bind { cellDatas in
-            guard cellDatas.count == 10 else { return }
-            let rankSortedCellDatas = cellDatas.sorted { a, b in
-                Int(a.currentRank) ?? 0 < Int(b.currentRank) ?? 0
+        
+        homeViewModel.allWeekMovieCellDatas.bind { [weak self] cellDatas in
+            let rankSortedCellDatas = cellDatas.sorted {
+                Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
             }
+            
             DispatchQueue.main.async {
-                self.homeCollectionView.appendAllWeekSnapshot(data: rankSortedCellDatas)
-                self.activityIndicator.stopAnimating()
+                self?.homeCollectionView.appendAllWeekSnapshot(data: rankSortedCellDatas)
+                self?.activityIndicator.stopAnimating()
             }
         }
-        homeViewModel.weekEndMovieCellDatas.bind { cellDatas in
-            guard cellDatas.count == 10 else { return }
-            let rankSortedCellDatas = cellDatas.sorted { a, b in
-                Int(a.currentRank) ?? 0 < Int(b.currentRank) ?? 0
+        
+        homeViewModel.weekEndMovieCellDatas.bind { [weak self] cellDatas in
+            let rankSortedCellDatas = cellDatas.sorted {
+                Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
             }
+            
             DispatchQueue.main.async {
-                self.homeCollectionView.appendWeekEndSnapshot(data: rankSortedCellDatas)
-                self.activityIndicator.stopAnimating()
+                self?.homeCollectionView.appendWeekEndSnapshot(data: rankSortedCellDatas)
+                self?.activityIndicator.stopAnimating()
             }
         }
         
@@ -129,6 +133,7 @@ final class HomeViewController: UIViewController {
     
     private func requestInitialData() async throws {
         try await homeViewModel.requestDailyData(with: searchingDate.toString())
+        activityIndicator.startAnimating()
     }
     
     @objc private func viewModeChangeButtonTapped() {
@@ -171,8 +176,8 @@ extension HomeViewController: UICollectionViewDelegate {
     }
     
     private func pushMovieDetail(in cellDatas: [MovieData], at index: Int) {
-        let rankSortedCellDatas = cellDatas.sorted { a, b in
-            Int(a.currentRank) ?? 0 < Int(b.currentRank) ?? 0
+        let rankSortedCellDatas = cellDatas.sorted {
+            Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
         }
         let tappedCellData = rankSortedCellDatas[index]
         let movieDetailViewController = MovieDetailViewController(movieDetail: tappedCellData)
@@ -259,5 +264,15 @@ private extension HomeViewController {
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
         ])
+    }
+}
+
+
+enum MovieInformation {
+    static let mainviewTitle = "영화목록"
+    static let dailyBoxOfficeTitle = "▼ 일별 박스오피스"
+    
+    enum Image {
+        static let calendar =  UIImage(systemName: "calendar")
     }
 }
