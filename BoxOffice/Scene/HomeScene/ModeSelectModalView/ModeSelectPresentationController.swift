@@ -19,10 +19,10 @@ final class ModeSelectPresentationController: UIPresentationController {
     }()
     
     override var frameOfPresentedViewInContainerView: CGRect {
-        let screenSize = UIScreen.main.bounds
-        let size = CGSize(width: screenSize.width,
-                          height: screenSize.height * 0.25)
-        let origin = CGPoint(x: .zero, y: screenSize.height * 0.75)
+        let screenBounds = UIScreen.main.bounds
+        let size = CGSize(width: screenBounds.width,
+                          height: screenBounds.height * 0.25)
+        let origin = CGPoint(x: .zero, y: screenBounds.height * 0.75)
         
         return CGRect(origin: origin, size: size)
     }

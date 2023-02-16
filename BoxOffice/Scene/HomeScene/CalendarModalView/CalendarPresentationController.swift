@@ -19,9 +19,12 @@ final class CalendarPresentationController: UIPresentationController {
     }()
     
     override var frameOfPresentedViewInContainerView: CGRect {
-        let size = CGSize(width: UIScreen.main.bounds.width - 100,
-                          height: UIScreen.main.bounds.height / 4)
-        let origin = CGPoint(x: 100, y: 50)
+        let screenBounds = UIScreen.main.bounds
+        let size = CGSize(width: screenBounds.width * 0.75,
+                          height: screenBounds.height * 0.25)
+        let origin = CGPoint(x: screenBounds.width * 0.25,
+                             y: screenBounds.height * 0.25 * 0.25)
+        
         return CGRect(origin: origin, size: size)
     }
     
@@ -67,10 +70,8 @@ final class CalendarPresentationController: UIPresentationController {
 
     private func adoptTapGestureRecognizer() {
         guard let adoptedView = containerView else { return }
-        let tapGestureRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(dismissView(_:))
-        )
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self,
+                                                          action: #selector(dismissView(_:)))
         adoptedView.addGestureRecognizer(tapGestureRecognizer)
     }
     
@@ -85,7 +86,9 @@ final class CalendarPresentationController: UIPresentationController {
     
     @objc private func dismissView(_ sender: UITouch) {
         let point = sender.location(in: presentedView)
-        if point.y > 235 || point.x < 0 {
+        let size = UIScreen.main.bounds.height
+        
+        if point.y > size * 0.25 || point.x < 0 {
             presentedViewController.dismiss(animated: true)
         }
     }

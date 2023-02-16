@@ -213,7 +213,7 @@ extension HomeViewController: ModeSelectViewControllerDelegate {
         guard let mode = BoxOfficeMode(rawValue: indexPath) else { return }
         
         viewMode = mode
-        viewModeChangeButton.setTitle("▼ \(mode.title)", for: .normal)
+        viewModeChangeButton.setTitle(" ▼ \(mode.title)", for: .normal)
         
         let dateText = searchingDate.toString()
         
