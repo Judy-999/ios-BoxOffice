@@ -15,6 +15,7 @@ final class CalendarViewController: UIViewController {
     weak var delegate: CalendarViewControllerDelegate?
     private var customTransitioningDelegate = CalendarTransitioningDelegate()
     private let navigationBar = UINavigationBar(frame: .zero)
+    private let boxOfficeMode: BoxOfficeMode
     
     let datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -26,7 +27,8 @@ final class CalendarViewController: UIViewController {
         return datePicker
     }()
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+    init(viewMode: BoxOfficeMode) {
+        self.boxOfficeMode = viewMode
         super.init(nibName: nil, bundle: nil)
         setupModalStyle()
     }
@@ -38,6 +40,7 @@ final class CalendarViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupInitialView()
+        setupDatePicker()
         addSubviews()
         setupLayer()
         setupNavigationBar()
@@ -55,22 +58,28 @@ final class CalendarViewController: UIViewController {
         view.clipsToBounds = true
     }
     
+    private func setupDatePicker() {
+        switch boxOfficeMode {
+        case .daily:
+            datePicker.maximumDate = Date()
+        case .weekly:
+            datePicker.maximumDate = Date().previousDate(to: -7)
+        }
+    }
+    
     private func setupNavigationBar() {
         navigationBar.translatesAutoresizingMaskIntoConstraints = false
-        navigationBar.isTranslucent = false
-        navigationBar.backgroundColor = .systemBackground
-
+        
         let naviItem = UINavigationItem(title: "날짜 선택")
-        naviItem.leftBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .close,
-            target: self,
-            action: #selector(closeButtonTapped)
-        )
-        naviItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .search,
-            target: self,
-            action: #selector(searchButtonTapped)
-        )
+        
+        naviItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close,
+                                                     target: self,
+                                                     action: #selector(closeButtonTapped))
+        
+        naviItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search,
+                                                      target: self,
+                                                      action: #selector(searchButtonTapped))
+        
         navigationBar.items = [naviItem]
     }
     
@@ -79,10 +88,10 @@ final class CalendarViewController: UIViewController {
     }
     
     @objc private func searchButtonTapped() {
-        let date = datePicker.date
         Task {
-            try await delegate?.searchButtonTapped(date: date)
+            try await delegate?.searchButtonTapped(date: datePicker.date)
         }
+        
         self.dismiss(animated: true)
     }
 }
@@ -100,9 +109,10 @@ private extension CalendarViewController {
             navigationBar.topAnchor.constraint(equalTo: view.topAnchor),
             navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navigationBar.heightAnchor.constraint(equalToConstant: 60),
+            navigationBar.heightAnchor.constraint(equalTo: view.heightAnchor,
+                                                  multiplier: 1/5),
             
-            datePicker.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            datePicker.topAnchor.constraint(equalTo: navigationBar.bottomAnchor),
             datePicker.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             datePicker.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             datePicker.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)

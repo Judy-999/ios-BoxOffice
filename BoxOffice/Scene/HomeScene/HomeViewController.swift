@@ -153,7 +153,7 @@ final class HomeViewController: UIViewController {
     }
     
     @objc private func calendarButtonTapped() {
-        let calendarViewController = CalendarViewController()
+        let calendarViewController = CalendarViewController(viewMode: viewMode)
         calendarViewController.delegate = self
         calendarViewController.datePicker.date = searchingDate
         
