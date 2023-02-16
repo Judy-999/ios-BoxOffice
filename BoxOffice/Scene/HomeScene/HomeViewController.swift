@@ -23,7 +23,7 @@ enum BoxOfficeMode: Int, CaseIterable {
 
 final class HomeViewController: UIViewController {
     private let homeCollectionView = HomeCollectionView()
-    private let homeViewModel = DefaultHomeViewModel()
+    private let homeViewModel = HomeViewModel()
     private var searchingDate: Date = Date().previousDate(to: -7)
     private let viewModeChangeButton: UIButton = {
         let button = UIButton()
@@ -44,12 +44,11 @@ final class HomeViewController: UIViewController {
         }
     }
     
-    private let activityIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(frame: .zero)
+    lazy var indicatorView: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
         indicator.tintColor = .systemBlue
-        indicator.style = .large
         indicator.hidesWhenStopped = true
-        indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.frame = view.frame
         return indicator
     }()
     
@@ -104,45 +103,47 @@ final class HomeViewController: UIViewController {
     }
     
     private func bind() {
-        homeViewModel.dailyMovieCellDatas.bind { [weak self] cellDatas in
+        homeViewModel.dailyMovieCellDatas
+            .bind { [weak self] cellDatas in
             let rankSortedCellDatas = cellDatas.sorted {
                 Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
             }
-            
-            DispatchQueue.main.async {
+                
                 self?.homeCollectionView.appendDailySnapshot(with: rankSortedCellDatas)
-                self?.activityIndicator.stopAnimating()
             }
-        }
         
-        homeViewModel.allWeekMovieCellDatas.bind { [weak self] cellDatas in
+        homeViewModel.allWeekMovieCellDatas
+            .bind { [weak self] cellDatas in
             let rankSortedCellDatas = cellDatas.sorted {
                 Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
             }
-            
-            DispatchQueue.main.async {
+                
                 self?.homeCollectionView.appendAllWeekSnapshot(data: rankSortedCellDatas)
-                self?.activityIndicator.stopAnimating()
             }
-        }
         
-        homeViewModel.weekEndMovieCellDatas.bind { [weak self] cellDatas in
-            let rankSortedCellDatas = cellDatas.sorted {
-                Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
-            }
-            
-            DispatchQueue.main.async {
+        homeViewModel.weekEndMovieCellDatas
+            .bind { [weak self] cellDatas in
+                let rankSortedCellDatas = cellDatas.sorted {
+                    Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
+                }
+                
                 self?.homeCollectionView.appendWeekEndSnapshot(data: rankSortedCellDatas)
-                self?.activityIndicator.stopAnimating()
+
             }
-        }
+        
+        homeViewModel.isLoading
+            .bind { [weak self] isLoading in
+                DispatchQueue.main.async {
+                    isLoading ?
+                    self?.indicatorView.startAnimating() : self?.indicatorView.stopAnimating()
+                }
+            }
         
         homeCollectionView.currentDate = searchingDate.toString()
     }
     
     private func requestInitialData() async throws {
         try await homeViewModel.requestDailyData(with: searchingDate.toString())
-        activityIndicator.startAnimating()
     }
     
     @objc private func viewModeChangeButtonTapped() {
@@ -161,6 +162,7 @@ final class HomeViewController: UIViewController {
     }
 }
 
+// MARK: CollectionView Delegate
 extension HomeViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -209,8 +211,6 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 // MARK: ModalView Delegate
 extension HomeViewController: ModeSelectViewControllerDelegate {
     func didSelectedRowAt(indexPath: Int) async throws {
-        activityIndicator.startAnimating()
-        
         guard let mode = BoxOfficeMode(rawValue: indexPath) else { return }
                 
         viewModeChangeButton.setTitle("▼ \(mode.title)", for: .normal)
@@ -233,9 +233,9 @@ extension HomeViewController: ModeSelectViewControllerDelegate {
     }
 }
 
+// MARK: CalendarView Delegate
 extension HomeViewController: CalendarViewControllerDelegate {
     func searchButtonTapped(date: Date) async throws {
-        activityIndicator.startAnimating()
         searchingDate = date
         let dateText = date.toString()
         homeCollectionView.currentDate = dateText
@@ -259,7 +259,7 @@ private extension HomeViewController {
     func addSubviews() {
         view.addSubview(homeCollectionView)
         view.addSubview(viewModeChangeButton)
-        view.addSubview(activityIndicator)
+        view.addSubview(indicatorView)
     }
     
     func setupConstraints() {
@@ -272,12 +272,7 @@ private extension HomeViewController {
             homeCollectionView.topAnchor.constraint(equalTo: viewModeChangeButton.bottomAnchor),
             homeCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             homeCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            homeCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            
-            activityIndicator.widthAnchor.constraint(equalToConstant: 40),
-            activityIndicator.heightAnchor.constraint(equalToConstant: 40),
-            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            homeCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ])
     }
 }
