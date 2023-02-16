@@ -30,7 +30,7 @@ final class HomeViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("▼ " + BoxOfficeMode.daily.title, for: .normal)
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .callout)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.label, for: .normal)
         button.backgroundColor = .systemGray5
         button.contentHorizontalAlignment = .left
         return button

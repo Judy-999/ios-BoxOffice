@@ -55,7 +55,8 @@ struct MovieAPIUseCase {
                 let movieOpenYear = String(movieInfo.movieCd.prefix(4))
                 
                 do {
-                    let posterURL = try await fetchMoviePosterURL(with: movieEnglishName, year: movieOpenYear)
+                    let posterURL = try await fetchMoviePosterURL(with: movieEnglishName,
+                                                                  year: movieOpenYear)
                     try await appendCellData(
                         to: dataList,
                         boxOffice: boxOffice,
@@ -88,9 +89,12 @@ struct MovieAPIUseCase {
         return url
     }
     
-    private func appendCellData(to list: Observable<[MovieData]>, boxOffice: BoxOffice,
-                        movieInfo: MovieInfo, posterURL: URL?) async throws {
+    private func appendCellData(to list: Observable<[MovieData]>,
+                                boxOffice: BoxOffice,
+                                movieInfo: MovieInfo,
+                                posterURL: URL?) async throws {
         let image = try await imageCacheManager.getImage(with: posterURL)
+        
         list.value.append(
             MovieData(
                 uuid: UUID(),
