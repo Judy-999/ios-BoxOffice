@@ -25,6 +25,8 @@ final class HomeViewController: UIViewController {
     private let homeCollectionView = HomeCollectionView()
     private let homeViewModel = HomeViewModel()
     private var searchingDate: Date = Date().previousDate(to: -7)
+    private var viewMode: BoxOfficeMode = .daily
+    
     private let viewModeChangeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -35,15 +37,7 @@ final class HomeViewController: UIViewController {
         button.contentHorizontalAlignment = .left
         return button
     }()
-    
-    private var viewMode: BoxOfficeMode {
-        if viewModeChangeButton.currentTitle == MovieInformation.dailyBoxOfficeTitle {
-            return BoxOfficeMode.daily
-        } else {
-            return BoxOfficeMode.weekly
-        }
-    }
-    
+
     lazy var indicatorView: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.tintColor = .systemBlue
@@ -105,20 +99,24 @@ final class HomeViewController: UIViewController {
     private func bind() {
         homeViewModel.dailyMovieCellDatas
             .bind { [weak self] cellDatas in
-            let rankSortedCellDatas = cellDatas.sorted {
-                Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
-            }
+                let rankSortedCellDatas = cellDatas.sorted {
+                    Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
+                }
                 
-                self?.homeCollectionView.appendDailySnapshot(with: rankSortedCellDatas)
+                DispatchQueue.main.async {
+                    self?.homeCollectionView.appendDailySnapshot(with: rankSortedCellDatas)
+                }
             }
         
         homeViewModel.allWeekMovieCellDatas
             .bind { [weak self] cellDatas in
-            let rankSortedCellDatas = cellDatas.sorted {
-                Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
-            }
+                let rankSortedCellDatas = cellDatas.sorted {
+                    Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
+                }
                 
-                self?.homeCollectionView.appendAllWeekSnapshot(data: rankSortedCellDatas)
+                DispatchQueue.main.async {
+                    self?.homeCollectionView.appendAllWeekSnapshot(data: rankSortedCellDatas)
+                }
             }
         
         homeViewModel.weekEndMovieCellDatas
@@ -127,8 +125,9 @@ final class HomeViewController: UIViewController {
                     Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
                 }
                 
-                self?.homeCollectionView.appendWeekEndSnapshot(data: rankSortedCellDatas)
-
+                DispatchQueue.main.async {
+                    self?.homeCollectionView.appendWeekEndSnapshot(data: rankSortedCellDatas)
+                }
             }
         
         homeViewModel.isLoading
@@ -212,12 +211,13 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 extension HomeViewController: ModeSelectViewControllerDelegate {
     func didSelectedRowAt(indexPath: Int) async throws {
         guard let mode = BoxOfficeMode(rawValue: indexPath) else { return }
-                
+        
+        viewMode = mode
         viewModeChangeButton.setTitle("▼ \(mode.title)", for: .normal)
         
         let dateText = searchingDate.toString()
         
-        switch mode {
+        switch viewMode {
         case .daily:
             homeCollectionView.switchMode(.daily)
             try await homeViewModel.requestDailyData(with: dateText)
@@ -239,11 +239,14 @@ extension HomeViewController: CalendarViewControllerDelegate {
         searchingDate = date
         let dateText = date.toString()
         homeCollectionView.currentDate = dateText
-        if viewModeChangeButton.title(for: .normal) == "▼ 일별 박스오피스" {
+        
+        switch viewMode {
+        case .daily:
             self.homeCollectionView.switchMode(.daily)
             try await homeViewModel.requestDailyData(with: dateText)
-        } else {
+        case .weekly:
             self.homeCollectionView.switchMode(.weekly)
+            
             Task {
                 try await homeViewModel.requestAllWeekData(with: dateText)
             }
