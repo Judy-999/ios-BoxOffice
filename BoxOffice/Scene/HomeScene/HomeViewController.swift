@@ -30,7 +30,7 @@ final class HomeViewController: UIViewController {
     private let viewModeChangeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("▼ " + BoxOfficeMode.daily.title, for: .normal)
+        button.setTitle(" ▼ " + BoxOfficeMode.daily.title, for: .normal)
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .callout)
         button.setTitleColor(.label, for: .normal)
         button.backgroundColor = .systemGray5

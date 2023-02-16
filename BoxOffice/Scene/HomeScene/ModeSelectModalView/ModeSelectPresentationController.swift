@@ -19,9 +19,11 @@ final class ModeSelectPresentationController: UIPresentationController {
     }()
     
     override var frameOfPresentedViewInContainerView: CGRect {
-        let size = CGSize(width: UIScreen.main.bounds.width,
-                          height: UIScreen.main.bounds.height/4)
-        let origin = CGPoint(x: 0, y: (UIScreen.main.bounds.height*3)/4)
+        let screenSize = UIScreen.main.bounds
+        let size = CGSize(width: screenSize.width,
+                          height: screenSize.height * 0.25)
+        let origin = CGPoint(x: .zero, y: screenSize.height * 0.75)
+        
         return CGRect(origin: origin, size: size)
     }
     
@@ -68,10 +70,9 @@ final class ModeSelectPresentationController: UIPresentationController {
 
     private func adoptPanGestureRecognizer() {
         guard let adoptedView = containerView else { return }
-        let panGestureRecognizer = UIPanGestureRecognizer(
-            target: self,
-            action: #selector(dismissView(_:))
-        )
+        
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self,
+                                                          action: #selector(dismissView(_:)))
         adoptedView.addGestureRecognizer(panGestureRecognizer)
     }
     
@@ -87,19 +88,15 @@ final class ModeSelectPresentationController: UIPresentationController {
     @objc private func dismissView(_ sender: UIPanGestureRecognizer) {
         guard let presentedView = presentedView else { return }
         let translation = sender.translation(in: presentedView)
+        let velocity = sender.velocity(in: presentedView)
         
-        if sender.state == .began {
+        switch sender.state {
+        case .began:
             originalPosition = presentedView.center
             currentPositionTouched = sender.location(in: presentedView)
-        } else if sender.state == .changed {
-            
-            if presentedView.frame.origin.y < 680 {
-                return
-            }
+        case .changed:
             presentedView.center.y = originalPosition.y + translation.y * 0.1
-        } else if sender.state == .ended {
-            let velocity = sender.velocity(in: presentedView)
-            
+        case .ended:
             if velocity.y >= 100 {
                 presentedViewController.dismiss(animated: true)
             } else {
@@ -107,6 +104,8 @@ final class ModeSelectPresentationController: UIPresentationController {
                     presentedView.center = originalPosition
                 }
             }
+        default:
+            break
         }
     }
 }

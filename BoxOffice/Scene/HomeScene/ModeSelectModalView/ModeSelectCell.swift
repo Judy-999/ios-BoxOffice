@@ -48,10 +48,12 @@ private extension ModeSelectCell {
     func setupLayout() {
         NSLayoutConstraint.activate([
             boxOfficeLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            boxOfficeLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            boxOfficeLabel.leadingAnchor.constraint(equalTo: leadingAnchor,
+                                                    constant: 16),
             
             checkImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            checkImageView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            checkImageView.trailingAnchor.constraint(equalTo: trailingAnchor,
+                                                     constant: -16),
         ])
     }
 }
