@@ -24,7 +24,7 @@ final class GridCell: UICollectionViewCell {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.alignment = .top
+        stackView.spacing = 2
         return stackView
     }()
     
@@ -33,22 +33,17 @@ final class GridCell: UICollectionViewCell {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.alignment = .leading
+        stackView.spacing = 2
         return stackView
-    }()
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .title2)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.setContentHuggingPriority(UILayoutPriority(100), for: .vertical)
-        return label
     }()
     
     private let badgeStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
-        stackView.spacing = 5
+        stackView.spacing = 2
+        stackView.alignment = .top
+        stackView.setContentHuggingPriority(.defaultLow, for: .vertical)
         return stackView
     }()
     
@@ -56,7 +51,8 @@ final class GridCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .systemGray
-        label.font = UIFont.preferredFont(forTextStyle: .callout)
+        label.font = UIFont.preferredFont(forTextStyle: .footnote)
+        label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         return label
     }()
     
@@ -64,17 +60,9 @@ final class GridCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .systemGray
-        label.font = UIFont.preferredFont(forTextStyle: .callout)
+        label.font = UIFont.preferredFont(forTextStyle: .footnote)
+        label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         return label
-    }()
-
-    private let fakeView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.widthAnchor.constraint(equalToConstant: 10).isActive = true
-        view.heightAnchor.constraint(greaterThanOrEqualToConstant: 1).isActive = true
-        view.setContentHuggingPriority(.init(100), for: .vertical)
-        return view
     }()
 
     private let currentRankLabel: UILabel = {
@@ -89,6 +77,7 @@ final class GridCell: UICollectionViewCell {
         return label
     }()
 
+    private let titleLabel = MovieLabel(font: .title3)
     private let rankChangeBandgeLabel = RankBadgeLabel()
     private let newEntryBadgeLabel = RankBadgeLabel()
     
@@ -102,25 +91,18 @@ final class GridCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setup(with data: MovieData) {
-        titleLabel.text = data.title
-        currentRankLabel.text = data.currentRank
-        setOpenDateLabel(with: data.openDate)
-        setupRankChangeLabel(with: data.rankChange)
-        setTotalAudiencesCountLabel(with: data.totalAudience)
-        newEntryBadgeLabel.setupEntryInfo(with: data.isNewEntry)
-        setPosterImageView(with: data.poster)
+    func setup(with movie: MovieData) {
+        titleLabel.text = movie.title
+        currentRankLabel.text = movie.currentRank
+        setOpenDateLabel(with: movie.openDate)
+        setupRankChangeLabel(with: movie.rankChange)
+        setTotalAudiencesCountLabel(with: movie.totalAudience)
+        newEntryBadgeLabel.setupEntryInfo(with: movie.isNewEntry)
+        setPosterImageView(with: movie.poster)
     }
     
     private func setOpenDateLabel(with openDate: String) {
-        let characterArray = Array(openDate).map { String($0) }
-        let date = characterArray[0...3].joined()
-        + "-"
-        + characterArray[4...5].joined()
-        + "-" + characterArray[6...7].joined()
-        + " 개봉"
-        
-        openDateLabel.text = date
+        openDateLabel.text = openDate.toDateFormat() + " 개봉"
     }
     
     private func setupRankChangeLabel(with rankChange: String) {
@@ -132,14 +114,14 @@ final class GridCell: UICollectionViewCell {
     }
     
     private func setTotalAudiencesCountLabel(with totalAudience: String) {
-        totalAudiencesCountLabel.text = "관객수 " + totalAudience.toDecimal() + "명"
+        totalAudiencesCountLabel.text = totalAudience.toDecimal() + "명 관람"
     }
     
     private func setPosterImageView(with image: UIImage?) {
         if let image = image {
             posterImageView.image = image
         } else {
-            let image = UIImage(systemName: "nosign")
+            let image = BoxOfficeImage.posterPlacehorder
             posterImageView.backgroundColor = .systemGray6
             posterImageView.image = image
         }
@@ -148,7 +130,7 @@ final class GridCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         rankChangeBandgeLabel.isHidden = false
-        posterImageView.image = UIImage(systemName: "nosign")
+        posterImageView.image = BoxOfficeImage.posterPlacehorder
         posterImageView.backgroundColor = nil
     }
 }
@@ -163,7 +145,6 @@ private extension GridCell {
         infoStackView.addArrangedSubview(badgeStackView)
         infoStackView.addArrangedSubview(totalAudiencesCountLabel)
         infoStackView.addArrangedSubview(openDateLabel)
-        infoStackView.addArrangedSubview(fakeView)
         
         mainStackView.addArrangedSubview(posterImageView)
         mainStackView.addArrangedSubview(infoStackView)
@@ -173,6 +154,8 @@ private extension GridCell {
     }
     
     func setupLayout() {
+        titleLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        
         NSLayoutConstraint.activate([
             mainStackView.topAnchor.constraint(equalTo: topAnchor),
             mainStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -184,7 +167,7 @@ private extension GridCell {
             currentRankLabel.widthAnchor.constraint(equalTo: posterImageView.widthAnchor, multiplier: 1/5),
             currentRankLabel.heightAnchor.constraint(equalTo: currentRankLabel.widthAnchor),
             
-            posterImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 7/10),
+            posterImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.7),
             posterImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
         ])
     }
