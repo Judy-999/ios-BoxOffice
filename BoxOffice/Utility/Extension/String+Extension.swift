@@ -8,14 +8,29 @@
 import Foundation
 
 extension String {
-    var numberFormatter: NumberFormatter {
+    func toDecimal() -> String {
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .decimal
-        return numberFormatter
+        
+        if let number = Int(self),
+           let numberToDecimal = numberFormatter.string(
+            from: NSNumber(integerLiteral: number)
+           ) {
+            return numberToDecimal
+        }
+        
+        return self
     }
     
-    func toDecimal() -> String {
-        guard let number = Int(self) else { return "" }
-        return numberFormatter.string(from: NSNumber(integerLiteral: number)) ?? ""
+    func toDateFormat() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        
+        if let date = dateFormatter.date(from: self) {
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            return dateFormatter.string(from: date)
+        }
+   
+        return self
     }
 }

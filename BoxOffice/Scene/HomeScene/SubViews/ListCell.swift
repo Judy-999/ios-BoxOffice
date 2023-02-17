@@ -21,54 +21,34 @@ final class ListCell: UICollectionViewCell {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
+        stackView.spacing = 8
+        return stackView
+    }()
+    
+    private let rankStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
         stackView.alignment = .top
-        stackView.spacing = 10
         return stackView
     }()
     
     private let infoStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
         stackView.axis = .vertical
         stackView.alignment = .leading
-        stackView.spacing = 10
+        stackView.spacing = 8
         return stackView
     }()
-    
-    private let rankLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .largeTitle)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .title2)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.numberOfLines = 2
-        return label
-    }()
-    
+
     private let badgeStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
-        stackView.spacing = 5
+        stackView.alignment = .top
+        stackView.spacing = 8
         return stackView
-    }()
-    
-    private let fakeView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.widthAnchor.constraint(equalToConstant: 10).isActive = true
-        view.heightAnchor.constraint(greaterThanOrEqualToConstant: 1).isActive = true
-        view.setContentHuggingPriority(.init(100), for: .vertical)
-        return view
     }()
     
     private let totalAudiencesCountLabel: UILabel = {
@@ -87,12 +67,16 @@ final class ListCell: UICollectionViewCell {
         return label
     }()
     
+    private let rankLabel = MovieLabel(font: .title1, isBold: true)
+    private let titleLabel = MovieLabel(font: .title2)
     private let rankChangeBandgeLabel = RankBadgeLabel()
     private let newEntryBadgeLabel = RankBadgeLabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .systemBackground
+        contentView.layer.addBottomBorder()
+        titleLabel.numberOfLines = 2
         addSubViews()
         setupLayout()
     }
@@ -101,25 +85,19 @@ final class ListCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setup(with data: MovieData) {
-        titleLabel.text = data.title
-        rankLabel.text = data.currentRank
+    func setup(with movie: MovieData) {
+        titleLabel.text = movie.title
+        rankLabel.text = movie.currentRank
 
-        setOpenDateLabel(with: data.openDate)
-        setupRankChangeLabel(with: data.rankChange)
-        setTotalAudiencesCountLabel(with: data.totalAudience)
-        newEntryBadgeLabel.setupEntryInfo(with: data.isNewEntry)
-        setPosterImageView(with: data.poster)
+        setOpenDateLabel(with: movie.openDate)
+        setupRankChangeLabel(with: movie.rankChange)
+        setTotalAudiencesCountLabel(with: movie.totalAudience)
+        newEntryBadgeLabel.setupEntryInfo(with: movie.isNewEntry)
+        setPosterImageView(with: movie.poster)
     }
     
     private func setOpenDateLabel(with openDate: String) {
-        let characterArray = Array(openDate).map { String($0) }
-        let date = characterArray[0...3].joined()
-        + "-" + characterArray[4...5].joined()
-        + "-" + characterArray[6...7].joined()
-        + " 개봉"
-        
-        openDateLabel.text = date
+        openDateLabel.text = openDate.toDateFormat() + " 개봉"
     }
     
     private func setupRankChangeLabel(with rankChange: String) {
@@ -131,33 +109,23 @@ final class ListCell: UICollectionViewCell {
     }
     
     private func setTotalAudiencesCountLabel(with totalAudience: String) {
-        totalAudiencesCountLabel.text = "관객수 " + totalAudience + "명"
+        totalAudiencesCountLabel.text = totalAudience.toDecimal() + "명 관람"
     }
     
     private func setPosterImageView(with image: UIImage?) {
         if let image = image {
             posterImageView.image = image
         } else {
-            let image = UIImage(systemName: "nosign")
+            let image = BoxOfficeImage.posterPlacehorder
             posterImageView.backgroundColor = .systemGray6
             posterImageView.image = image
         }
     }
-    
-    override func draw(_ rect: CGRect) {
-        let separator = UIBezierPath()
-        separator.move(to: CGPoint(x: 0, y: bounds.maxY))
-        separator.addLine(to: CGPoint(x: bounds.maxX, y: bounds.maxY))
-        separator.lineWidth = 2
-        UIColor.lightGray.setStroke()
-        separator.stroke()
-        separator.close()
-    }
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
         rankChangeBandgeLabel.isHidden = false
-        posterImageView.image = UIImage(systemName: "nosign")
+        posterImageView.image = BoxOfficeImage.posterPlacehorder
     }
 }
 
@@ -169,26 +137,53 @@ private extension ListCell {
         
         infoStackView.addArrangedSubview(titleLabel)
         infoStackView.addArrangedSubview(badgeStackView)
-        infoStackView.addArrangedSubview(fakeView)
         infoStackView.addArrangedSubview(totalAudiencesCountLabel)
         infoStackView.addArrangedSubview(openDateLabel)
         
+        rankStackView.addArrangedSubview(rankLabel)
+        
         mainStackView.addArrangedSubview(posterImageView)
-        mainStackView.addArrangedSubview(rankLabel)
+        mainStackView.addArrangedSubview(rankStackView)
         mainStackView.addArrangedSubview(infoStackView)
         
         addSubview(mainStackView)
     }
     
     func setupLayout() {
+        titleLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        badgeStackView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        totalAudiencesCountLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        openDateLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
+                
         NSLayoutConstraint.activate([
-            mainStackView.topAnchor.constraint(equalTo: topAnchor),
-            mainStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            mainStackView.topAnchor.constraint(equalTo: topAnchor,
+                                               constant: 8),
+            mainStackView.bottomAnchor.constraint(equalTo: bottomAnchor,
+                                                  constant: -8),
             mainStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             mainStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-            posterImageView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width*0.25),
             posterImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            posterImageView.widthAnchor.constraint(equalTo: contentView.widthAnchor,
+                                                   multiplier: 0.3)
         ])
     }
+}
+
+extension CALayer {
+    fileprivate func addBottomBorder() {
+        let border = CALayer()
+        
+        border.backgroundColor = UIColor.systemGray3.cgColor
+        border.frame = CGRect(x: .zero,
+                              y: frame.height - 0.5,
+                              width: frame.width,
+                              height: 0.5)
+        
+        self.addSublayer(border)
+    }
+}
+
+enum BoxOfficeImage {
+    static let posterPlacehorder = UIImage(systemName: "nosign")
 }
