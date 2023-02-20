@@ -29,84 +29,70 @@ final class HomeCollectionView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func appendDailySnapshot(with cellDatas: [MovieData]) {
+        guard cellDatas.count == 10 else { return }
+        snapshot.appendItems(cellDatas)
+        homeDataSource?.apply(snapshot, animatingDifferences: true)
+    }
+    
+    func appendAllWeekSnapshot(data: [MovieData]) {
+        guard data.count == 10 else { return }
+        snapshot.appendItems(data, toSection: .allWeek)
+        homeDataSource?.apply(snapshot, animatingDifferences: true)
+    }
+    
+    func appendWeekEndSnapshot(data: [MovieData]) {
+        guard data.count == 10 else { return }
+        snapshot.appendItems(data, toSection: .weekEnd)
+        homeDataSource?.apply(snapshot, animatingDifferences: true)
+    }
+    
+    
+    func switchMode(_ mode: BoxOfficeMode){
+        currentViewMode = mode
+        setCollectionViewLayout(createLayout(for: mode), animated: true)
+        
+        switch mode {
+        case .daily:
+            configureDataSource(with: createDailyCellRegistration())
+        case .weekly:
+            configureDataSource(with: createWeeklyCellRegistration())
+        }
+    }
+    
     private func configureHierachy() {
-        frame = bounds
-        collectionViewLayout = createDailyLayout()
+        collectionViewLayout = createLayout(for: currentViewMode)
         autoresizingMask = [.flexibleWidth, .flexibleHeight]
     }
     
-    private func createDailyLayout() -> UICollectionViewLayout {
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalHeight(1.0)
-        )
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,
-            leading: 10,
-            bottom: 0,
-            trailing: 10
-        )
+    private func createLayout(for mode: BoxOfficeMode) -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                              heightDimension: .fractionalHeight(1.0))
         
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalHeight(0.25)
-        )        
-        let group = NSCollectionLayoutGroup.vertical(
-            layoutSize: groupSize,
-            subitems: [item]
-        )
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(top: .zero,
+                                                     leading: 10,
+                                                     bottom: .zero,
+                                                     trailing: 10)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(mode.layoutWidth),
+                                               heightDimension: .fractionalHeight(mode.layoutHeight))
+       
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize,
+                                                     subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
         
-        let headerFooterSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(60)
-        )
-        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerFooterSize,
-            elementKind: "headerView",
-            alignment: .top
-        )
-        section.boundarySupplementaryItems = [sectionHeader]
+        if mode == .weekly {
+            section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
+        }
         
-        let layout = UICollectionViewCompositionalLayout(section: section)
-        return layout
-    }
-    
-    private func createWeeklyLayout() -> UICollectionViewLayout {
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalHeight(1.0)
-        )
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.contentInsets = NSDirectionalEdgeInsets(
-            top: 0,
-            leading: 10,
-            bottom: 0,
-            trailing: 10
-        )
-        
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(0.45),
-            heightDimension: .fractionalHeight(0.45)
-        )
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: groupSize,
-            subitems: [item]
-        )
-        
-        let section = NSCollectionLayoutSection(group: group)
-        section.orthogonalScrollingBehavior = .continuousGroupLeadingBoundary
-        let headerFooterSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(50)
-        )
-        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: headerFooterSize,
-            elementKind: "headerView",
-            alignment: .top
-        )
+        let headerFooterSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                      heightDimension: .estimated(50))
+
+        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerFooterSize,
+                                                                        elementKind: "headerView",
+                                                                        alignment: .top)
         section.boundarySupplementaryItems = [sectionHeader]
         
         let layout = UICollectionViewCompositionalLayout(section: section)
@@ -122,25 +108,26 @@ final class HomeCollectionView: UICollectionView {
         homeDataSource?.supplementaryViewProvider = { (view, kind, index) in
             return self.dequeueConfiguredReusableSupplementary(using: headerRegistration, for: index)
         }
-        if currentViewMode == .daily {
-            snapshot.deleteAllItems()
+        
+        snapshot.deleteAllItems()
+        
+        switch currentViewMode {
+        case .daily:
             snapshot.appendSections([.main])
-            homeDataSource?.apply(snapshot, animatingDifferences: false)
-        } else {
-            snapshot.deleteAllItems()
+        case .weekly:
             snapshot.appendSections([.allWeek, .weekEnd])
-            homeDataSource?.apply(snapshot, animatingDifferences: false)
         }
+        
+        homeDataSource?.apply(snapshot, animatingDifferences: false)
     }
     
     private func createHeaderRegistration() -> UICollectionView.SupplementaryRegistration<HeaderView> {
-        let headerRegistration = UICollectionView.SupplementaryRegistration<HeaderView>(elementKind: "headerView") {
+        let headerRegistration = UICollectionView.SupplementaryRegistration<HeaderView>(elementKind: "headerView") { [self]
             (supplementaryView, elementKind, indexPath) in
-            if self.currentViewMode == .daily {
-                guard self.currentDate != "" else { return }
-                let dateArray = Array(self.currentDate).map { String($0) }
-                supplementaryView.sectionHeaderlabel.text = "\(dateArray[0...3].joined())년 \(dateArray[4...5].joined())월 \(dateArray[6...7].joined())일"
-            } else {
+            switch self.currentViewMode {
+            case .daily:
+                supplementaryView.sectionHeaderlabel.text = currentDate.toHearderDateFormat()
+            case .weekly:
                 supplementaryView.sectionHeaderlabel.text = Section.allCases[indexPath.section].rawValue
             }
         }
@@ -165,47 +152,31 @@ final class HomeCollectionView: UICollectionView {
         with cellRegistration: UICollectionView.CellRegistration<T, MovieData>
     ) -> UICollectionViewDiffableDataSource<Section, MovieData>? {
         let dataSource = UICollectionViewDiffableDataSource<Section, MovieData>(collectionView: self) {
-            (collectionView: UICollectionView, indexPath: IndexPath, itemIdentifier: MovieData) -> UICollectionViewCell? in
-            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: itemIdentifier)
+            collectionView, indexPath, itemIdentifier -> UICollectionViewCell? in
+            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration,
+                                                                for: indexPath,
+                                                                item: itemIdentifier)
         }
         return dataSource
     }
-    
-    private func switchLayout(to mode: BoxOfficeMode) {
-        if mode == .daily {
-            setCollectionViewLayout(createDailyLayout(), animated: false)
-        } else {
-            setCollectionViewLayout(createWeeklyLayout(), animated: false)
+}
+
+fileprivate extension BoxOfficeMode {
+    var layoutWidth: CGFloat {
+        switch self {
+        case .daily:
+            return 1.0
+        case .weekly:
+            return 0.45
         }
     }
     
-    func appendDailySnapshot(with cellDatas: [MovieData]) {
-        guard cellDatas.count == 10 else { return }
-        snapshot.appendItems(cellDatas)
-        homeDataSource?.apply(snapshot, animatingDifferences: true)
-    }
-    
-    func appendAllWeekSnapshot(data: [MovieData]) {
-        guard data.count == 10 else { return }
-        snapshot.appendItems(data, toSection: .allWeek)
-        homeDataSource?.apply(snapshot, animatingDifferences: true)
-    }
-    
-    func appendWeekEndSnapshot(data: [MovieData]) {
-        guard data.count == 10 else { return }
-        snapshot.appendItems(data, toSection: .weekEnd)
-        homeDataSource?.apply(snapshot, animatingDifferences: true)
-    }
-    
-    func switchMode(_ mode: BoxOfficeMode){
-        switchLayout(to: mode)
-        currentViewMode = mode
-        
-        switch mode {
+    var layoutHeight: CGFloat {
+        switch self {
         case .daily:
-            configureDataSource(with: createDailyCellRegistration())
+            return 0.25
         case .weekly:
-            configureDataSource(with: createWeeklyCellRegistration())
+            return 0.42
         }
     }
 }
