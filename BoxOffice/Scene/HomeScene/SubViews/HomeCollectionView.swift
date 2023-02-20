@@ -14,12 +14,13 @@ final class HomeCollectionView: UICollectionView {
         case main
     }
     
-    var currentDate = ""
+    private var currentDate: String
     private var currentViewMode: BoxOfficeMode = .daily
     private var homeDataSource: UICollectionViewDiffableDataSource<Section, MovieData>?
     private var snapshot = NSDiffableDataSourceSnapshot<Section, MovieData>()
     
-    init() {
+    init(searchDate: Date) {
+        currentDate = searchDate.toString()
         super.init(frame: .zero, collectionViewLayout: UICollectionViewLayout())
         configureHierachy()
         configureDataSource(with: createDailyCellRegistration())
@@ -47,6 +48,9 @@ final class HomeCollectionView: UICollectionView {
         homeDataSource?.apply(snapshot, animatingDifferences: true)
     }
     
+    func updateDate(_ date: Date) {
+        currentDate = date.toString()
+    }
     
     func switchMode(_ mode: BoxOfficeMode){
         currentViewMode = mode

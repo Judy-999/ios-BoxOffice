@@ -22,7 +22,7 @@ enum BoxOfficeMode: Int, CaseIterable {
 }
 
 final class HomeViewController: UIViewController {
-    private let homeCollectionView = HomeCollectionView()
+    private lazy var homeCollectionView = HomeCollectionView(searchDate: searchingDate)
     private let homeViewModel = HomeViewModel()
     private var searchingDate: Date = Date().previousDate(to: -7)
     private var viewMode: BoxOfficeMode = .daily
@@ -138,7 +138,7 @@ final class HomeViewController: UIViewController {
                 }
             }
         
-        homeCollectionView.currentDate = searchingDate.toString()
+        homeCollectionView.updateDate(searchingDate)
     }
     
     private func requestInitialData() async throws {
@@ -237,19 +237,19 @@ extension HomeViewController: ModeSelectViewControllerDelegate {
 extension HomeViewController: CalendarViewControllerDelegate {
     func searchButtonTapped(date: Date) async throws {
         searchingDate = date
+        homeCollectionView.updateDate(date)
+        
         let dateText = date.toString()
-        homeCollectionView.currentDate = dateText
+        self.homeCollectionView.switchMode(viewMode)
         
         switch viewMode {
         case .daily:
-            self.homeCollectionView.switchMode(.daily)
             try await homeViewModel.requestDailyData(with: dateText)
         case .weekly:
-            self.homeCollectionView.switchMode(.weekly)
-            
             Task {
                 try await homeViewModel.requestAllWeekData(with: dateText)
             }
+            
             Task {
                 try await homeViewModel.requestWeekEndData(with: dateText)
             }
