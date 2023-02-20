@@ -33,4 +33,16 @@ extension String {
    
         return self
     }
+    
+    func toHearderDateFormat() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd"
+        
+        if let date = dateFormatter.date(from: self) {
+            dateFormatter.dateFormat = "yyyy년 MM월 dd일"
+            return dateFormatter.string(from: date)
+        }
+   
+        return self
+    }
 }
