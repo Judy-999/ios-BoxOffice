@@ -86,3 +86,12 @@ struct MovieRequest: APIRequest {
         return request
     }
 }
+
+extension APIRequest {
+    func execute<T: Decodable>(using client: APIProvider = APIProvider.shared) async throws -> T? {
+        guard let urlRequest = urlRequest else { return nil }
+        let data = try await client.requestData(with: urlRequest)
+        let result = try JSONDecoder().decode(T.self, from: data)
+        return result
+    }
+}

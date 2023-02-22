@@ -52,7 +52,7 @@ struct MovieAPIUseCase {
             Task {
                 guard let movieInfo = try await fetchMovieDetailInfo(with: boxOffice.movieCd) else { return }
                 let movieEnglishName = movieInfo.movieNmEn
-                let movieOpenYear = String(movieInfo.movieCd.prefix(4))
+                let movieOpenYear = String(movieInfo.prdtYear.prefix(4))
                 
                 do {
                     let posterURL = try await fetchMoviePosterURL(with: movieEnglishName,
