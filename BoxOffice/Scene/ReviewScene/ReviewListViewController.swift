@@ -6,10 +6,9 @@
 //
 
 import UIKit
+import RxSwift
 
 final class ReviewListViewController: UIViewController {
-    private let reviewViewModel: MovieReviewViewModel
-    private let movie: MovieData
     private let reviewTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -17,6 +16,10 @@ final class ReviewListViewController: UIViewController {
                            forCellReuseIdentifier: ReviewTableViewCell.identifier)
         return tableView
     }()
+    
+    private let reviewViewModel: MovieReviewViewModel
+    private let movie: MovieData
+    private let disposeBag = DisposeBag()
     
     init(movie: MovieData, viewModel: MovieReviewViewModel) {
         self.reviewViewModel = viewModel
@@ -53,19 +56,19 @@ final class ReviewListViewController: UIViewController {
     }
     
     private func bind() {
-        reviewViewModel.reviews.bind { [weak self] _ in
-            DispatchQueue.main.async {
+        reviewViewModel.reviews
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
                 self?.reviewTableView.reloadData()
-            }
-        }
+            })
+            .disposed(by: disposeBag)
         
-        reviewViewModel.error.bind { [weak self] error in
-            DispatchQueue.main.async {
-                if let description = error {
-                    self?.showAlert(message: description)
-                }
-            }
-        }
+        reviewViewModel.error
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] error in
+                self?.showAlert(message: error)
+            })
+            .disposed(by: disposeBag)
     }
 }
 

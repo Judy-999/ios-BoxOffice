@@ -5,15 +5,18 @@
 //  Created by Judy on 2023/01/04.
 //
 
+import RxSwift
+import RxRelay
+
 protocol MovieReviewViewModelInput {
     func save(_ review: Review, at movieKey: String)
     func fetch(at movieKey: String)
 }
 
 protocol MovieReviewViewModelOutput {
-    var reviews: Observable<[Review]> { get set }
-    var rating: Observable<String> { get set }
-    var error: Observable<String?> { get set }
+    var reviews: BehaviorRelay<[Review]> { get set }
+    var rating: PublishRelay<String> { get set }
+    var error: PublishRelay<String> { get set }
 }
 
 protocol MovieReviewViewModelType: MovieReviewViewModelInput, MovieReviewViewModelOutput { }
@@ -22,9 +25,9 @@ final class MovieReviewViewModel: MovieReviewViewModelType {
     private let reviewFirebaseUseCase = ReviewFirebaseUseCase()
     
     /// Output
-    var reviews: Observable<[Review]> = Observable([])
-    var rating: Observable<String> = Observable("")
-    var error: Observable<String?> = Observable(nil)
+    var reviews = BehaviorRelay<[Review]>(value: [])
+    var rating = PublishRelay<String>()
+    var error = PublishRelay<String>()
     
     /// Input
     func save(_ review: Review, at movieKey: String) {
@@ -33,7 +36,7 @@ final class MovieReviewViewModel: MovieReviewViewModelType {
             case .success(_):
                 break
             case .failure(let error):
-                self.error.value = error.localizedDescription
+                self.error.accept(error.localizedDescription)
             }
         }
         
@@ -44,10 +47,10 @@ final class MovieReviewViewModel: MovieReviewViewModelType {
         reviewFirebaseUseCase.fetch(at: movieKey) { [weak self] result in
             switch result {
             case .success(let reviews):
-                self?.reviews.value = reviews
+                self?.reviews.accept(reviews)
                 self?.calculateRating()
             case .failure(let error):
-                self?.error.value = error.localizedDescription
+                self?.error.accept(error.localizedDescription)
             }
         }
     }
@@ -58,7 +61,7 @@ final class MovieReviewViewModel: MovieReviewViewModelType {
             case .success(_):
                 break
             case .failure(let error):
-                self?.error.value = error.localizedDescription
+                self?.error.accept(error.localizedDescription)
             }
         }
         
@@ -69,8 +72,9 @@ final class MovieReviewViewModel: MovieReviewViewModelType {
         let ratings = reviews.value.map { $0.rating }
         let ratingValues = ratings.compactMap { Double($0) }
         let ratingSum = ratingValues.reduce(0, +)
+        let result = String(format: "%.1f", ratingSum / Double(ratingValues.count))
         
-        rating.value = String(format: "%.1f", ratingSum / Double(ratingValues.count))
+        rating.accept(result)
     }
 }
 

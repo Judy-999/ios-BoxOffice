@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxSwift
 
 final class WriteReviewViewController: UIViewController {
     private let photoButton: UIButton = {
@@ -80,6 +81,7 @@ final class WriteReviewViewController: UIViewController {
     private var password = String()
     private var imageURL = String()
     private let movie: MovieData
+    private let disposeBag = DisposeBag()
     
     init(movie: MovieData) {
         self.movie = movie
@@ -142,13 +144,11 @@ final class WriteReviewViewController: UIViewController {
     
     private func bind() {
         reviewViewModel.error
-            .bind { [weak self] error in
-                DispatchQueue.main.async {
-                    if let description = error {
-                        self?.showAlert(message: description)
-                    }
-                }
-            }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] error in
+                self?.showAlert(message: error)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
