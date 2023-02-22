@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxSwift
 
 protocol API {
     associatedtype ResponseType: Decodable
@@ -13,10 +14,14 @@ protocol API {
 }
 
 extension API {
-    func execute(using client: APIProvider = APIProvider.shared) async throws -> ResponseType? {
-        guard let urlRequest = configuration.makeURLRequest() else { return nil }
-        let data = try await client.requestData(with: urlRequest)
-        let result = try JSONDecoder().decode(ResponseType.self, from: data)
-        return result
+    func execute(using client: APIProvider = APIProvider.shared) -> Observable<ResponseType> {
+        guard let urlRequest = configuration.urlRequest else {
+            return Observable<ResponseType>.empty()
+        }
+        
+        return client.requestData(with: urlRequest)
+            .map { data in
+                return try JSONDecoder().decode(ResponseType.self, from: data)
+            }
     }
 }

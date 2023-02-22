@@ -71,27 +71,4 @@ struct MovieRequest: APIRequest {
         self.path = path
         self.httpMethod = httpMethod
     }
-    
-    func makeURLRequest() -> URLRequest? {
-        guard var urlComponent = URLComponents(string: baseURL.rawValue + path.rawValue) else { return nil }
-        if let query = query {
-            urlComponent.queryItems = query.map {
-                URLQueryItem(name: $0.key,
-                             value: "\($0.value)")
-            }
-        }
-        guard let url = urlComponent.url else { return nil }
-        var request = URLRequest(url: url)
-        request.httpMethod = httpMethod.rawValue
-        return request
-    }
-}
-
-extension APIRequest {
-    func execute<T: Decodable>(using client: APIProvider = APIProvider.shared) async throws -> T? {
-        guard let urlRequest = urlRequest else { return nil }
-        let data = try await client.requestData(with: urlRequest)
-        let result = try JSONDecoder().decode(T.self, from: data)
-        return result
-    }
 }

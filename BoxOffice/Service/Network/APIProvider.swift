@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
 final class APIProvider {
     static let shared = APIProvider(sesseion: URLSession.shared)
@@ -15,13 +17,13 @@ final class APIProvider {
         self.session = sesseion
     }
     
-    func requestData(with urlRequest: URLRequest) async throws -> Data {
-        let (data, response) = try await session.data(for: urlRequest)
-        let successRange = 200..<300
-        if let statusCode = (response as? HTTPURLResponse)?.statusCode,
-           !successRange.contains(statusCode) {
-            
-        }
-        return data
+    func requestData(with urlRequest: URLRequest) -> Observable<Data> {
+        return URLSession.shared.rx.response(request: urlRequest)
+            .filter { response, data in
+                200..<300 ~= response.statusCode
+            }
+            .map { _, data -> Data in
+                return data
+            }
     }
 }
