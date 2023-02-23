@@ -11,8 +11,8 @@
 		200597982966B690002AB7EC /* ReviewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200597972966B690002AB7EC /* ReviewTableViewCell.swift */; };
 		201825AA29664B8F00ADB79A /* MovieSubInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201825A929664B8F00ADB79A /* MovieSubInfoView.swift */; };
 		201825AC29664D8D00ADB79A /* MovieReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201825AB29664D8D00ADB79A /* MovieReviewView.swift */; };
+		201C77C429A618F200CC64CB /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 201C77C329A618F200CC64CB /* GoogleService-Info.plist */; };
 		201C827E2966F7F70060054B /* MovieLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201C827D2966F7F70060054B /* MovieLabel.swift */; };
-		203201FF29630CB000097F31 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 203201FE29630CB000097F31 /* GoogleService-Info.plist */; };
 		2032020229630EED00097F31 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 2032020129630EED00097F31 /* FirebaseAuth */; };
 		2032020429630EED00097F31 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 2032020329630EED00097F31 /* FirebaseFirestore */; };
 		2032020629630EED00097F31 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2032020529630EED00097F31 /* FirebaseFirestoreSwift */; };
@@ -94,8 +94,8 @@
 		200597972966B690002AB7EC /* ReviewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewTableViewCell.swift; sourceTree = "<group>"; };
 		201825A929664B8F00ADB79A /* MovieSubInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieSubInfoView.swift; sourceTree = "<group>"; };
 		201825AB29664D8D00ADB79A /* MovieReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieReviewView.swift; sourceTree = "<group>"; };
+		201C77C329A618F200CC64CB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		201C827D2966F7F70060054B /* MovieLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLabel.swift; sourceTree = "<group>"; };
-		203201FE29630CB000097F31 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		203F2A15299F1D7F00500EF4 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		20443790297A7A0900B05D48 /* MovieRequestBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieRequestBuilder.swift; sourceTree = "<group>"; };
 		20443792297A876A00B05D48 /* MovieRequestDirector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieRequestDirector.swift; sourceTree = "<group>"; };
@@ -274,6 +274,13 @@
 			path = Firebase;
 			sourceTree = "<group>";
 		};
+		2097BE6329A62467007B13F3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		20BB8C162963B37D00801668 /* Domain */ = {
 			isa = PBXGroup;
 			children = (
@@ -356,6 +363,7 @@
 				635A19E628F9603900197BCC /* BoxOffice */,
 				AF6C3A622963045F0074574D /* APITests */,
 				635A19E528F9603900197BCC /* Products */,
+				2097BE6329A62467007B13F3 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -372,7 +380,7 @@
 			isa = PBXGroup;
 			children = (
 				635A19F528F9603A00197BCC /* Info.plist */,
-				203201FE29630CB000097F31 /* GoogleService-Info.plist */,
+				201C77C329A618F200CC64CB /* GoogleService-Info.plist */,
 				AF6C3A522962E4490074574D /* MovieInfo.plist */,
 				201C82852966FDF10060054B /* Utility */,
 				20F38B032965BB1000415749 /* Scene */,
@@ -506,6 +514,8 @@
 				AF6C3A662963045F0074574D /* PBXTargetDependency */,
 			);
 			name = APITests;
+			packageProductDependencies = (
+			);
 			productName = APITests;
 			productReference = AF6C3A612963045F0074574D /* APITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -518,7 +528,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1400;
-				LastUpgradeCheck = 1400;
+				LastUpgradeCheck = 1410;
 				TargetAttributes = {
 					635A19E328F9603900197BCC = {
 						CreatedOnToolsVersion = 14.0.1;
@@ -558,9 +568,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				635A19F428F9603A00197BCC /* LaunchScreen.storyboard in Resources */,
+				201C77C429A618F200CC64CB /* GoogleService-Info.plist in Resources */,
 				AF6C3A532962E4490074574D /* MovieInfo.plist in Resources */,
 				635A19F128F9603A00197BCC /* Assets.xcassets in Resources */,
-				203201FF29630CB000097F31 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -626,8 +636,6 @@
 				AF85E0AB29651C0000A22732 /* ModeSelectCell.swift in Sources */,
 				AF3AEB2F2966CB4B00B82DCB /* MovieAPIUseCase.swift in Sources */,
 				AF22D9EC29682F130059075F /* ActorListViewController.swift in Sources */,
-				AF6C3A5C2962F4FF0074574D /* MovieData.swift in Sources */,
-				AF6C3A422962D5C80074574D /* MovieRequest.swift in Sources */,
 				AF85E0B12965509D00A22732 /* ImageCacheManager.swift in Sources */,
 				AF6C3A4F2962D79D0074574D /* SearchMovieInfoAPI.swift in Sources */,
 				20F8D473296816DF00FA77BA /* ReviewListViewController.swift in Sources */,
@@ -847,7 +855,8 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = SWPBG3YXG5;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 12.3;
@@ -869,7 +878,8 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = SWPBG3YXG5;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MACOSX_DEPLOYMENT_TARGET = 12.3;
