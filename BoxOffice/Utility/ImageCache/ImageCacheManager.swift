@@ -6,43 +6,48 @@
 //
 
 import UIKit
+import RxSwift
 
 protocol ImageCacheManager {
-    func getImage(with imageURL: URL?) async throws -> UIImage?
+    func getImage(with imageURL: URL?) -> Observable<UIImage?>
 }
 
 final class URLCacheManager: ImageCacheManager {
     private let cache = URLCache.shared
     private var dataTask: URLSessionDataTask?
     
-    func getImage(with imageURL: URL?) async throws -> UIImage? {
-        guard let imageURL = imageURL else { return nil }
+    func getImage(with imageURL: URL?) -> Observable<UIImage?> {
+        guard let imageURL = imageURL else {
+            return Observable<UIImage?>.just(nil)
+        }
+        
         let request = URLRequest(url: imageURL)
         
-        if self.cache.cachedResponse(for: request) != nil {
-            let image = self.loadImageFromCache(with: imageURL)
-            return image
-        } else {
-            let image = try await self.downloadImage(with: imageURL)
-            return image
+        if cache.cachedResponse(for: request) != nil {
+            return Observable.just(loadImageFromCache(with: imageURL))
         }
+        
+        return downloadImage(with: imageURL)
     }
     
     func loadImageFromCache(with imageURL: URL) -> UIImage? {
         let request = URLRequest(url: imageURL)
         
-        guard let data = self.cache.cachedResponse(for: request)?.data,
-              let image = UIImage(data: data) else { return nil }
-        return image
+        guard let data = cache.cachedResponse(for: request)?.data else { return nil }
+        return UIImage(data: data)
     }
     
-    func downloadImage(with imageURL: URL) async throws -> UIImage? {
+    func downloadImage(with imageURL: URL) -> Observable<UIImage?> {
         let request = URLRequest(url: imageURL)
         
-        let (data, response) = try await URLSession.shared.data(for: request)
-        let cachedData = CachedURLResponse(response: response, data: data)
-        self.cache.storeCachedResponse(cachedData, for: request)
-        guard let image = UIImage(data: data) else { return nil }
-        return image
+        return URLSession.shared.rx
+            .response(request: request)
+            .do { response,data in
+                let cachedData = CachedURLResponse(response: response, data: data)
+                self.cache.storeCachedResponse(cachedData, for: request)
+            }
+            .map { _, data in
+                UIImage(data: data)
+            }
     }
 }

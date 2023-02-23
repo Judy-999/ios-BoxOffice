@@ -45,13 +45,10 @@ struct MoviePosterResponseDTO: Decodable {
         case response = "Response"
     }
     
-    func posterURLString() -> String? {
-        let posterURL = search[0].poster
-        if posterURL.count < 10 {
-            return nil
-        } else {
-            return posterURL
-        }
+    var posterURL: String? {
+        guard let posterURL = search.first?.poster else { return nil }
+        
+        return posterURL.count < 10 ? nil : posterURL
     }
 }
 
