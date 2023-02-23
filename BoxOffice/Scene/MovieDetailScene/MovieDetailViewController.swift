@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxSwift
 
 final class MovieDetailViewController: UIViewController {
     private let entireStackView: UIStackView = {
@@ -29,6 +30,7 @@ final class MovieDetailViewController: UIViewController {
     private let movieSubInfoView = MovieSubInfoView()
     private let reviewViewModel = MovieReviewViewModel()
     private let movieDetail: MovieData
+    private let disposeBag = DisposeBag()
     
     init(movieDetail: MovieData) {
         self.movieDetail = movieDetail
@@ -57,24 +59,27 @@ final class MovieDetailViewController: UIViewController {
     }
     
     private func bind() {
-        reviewViewModel.reviews.bind { [weak self] _ in
-            DispatchQueue.main.async {
+        reviewViewModel.reviews
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
                 self?.reviewTableView.reloadData()
-            }
-        }
+            })
+            .disposed(by: disposeBag)
         
-        reviewViewModel.rating.bind { [self] rating in
-            movieMainInfoView.configure(with: movieDetail,
-                                              rating: rating)
-        }
         
-        reviewViewModel.error.bind { [weak self] error in
-            DispatchQueue.main.async {
-                if let description = error {
-                    self?.showAlert(message: description)
-                }
-            }
-        }
+        reviewViewModel.rating
+            .subscribe(onNext: { [self] rating in
+                movieMainInfoView.configure(with: movieDetail,
+                                            rating: rating)
+            })
+            .disposed(by: disposeBag)
+        
+        reviewViewModel.error
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] error in
+                self?.showAlert(message: error)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
