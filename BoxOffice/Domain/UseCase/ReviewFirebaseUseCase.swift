@@ -9,17 +9,25 @@ import UIKit
 import FirebaseFirestore
 
 final class ReviewFirebaseUseCase {
+    private enum ReviewData {
+        static let nickName = "nickName"
+        static let password = "password"
+        static let rating = "rating"
+        static let content = "content"
+        static let imageURL = "imageURL"
+    }
+    
     private let firestoreManager = FirestoreManager.shared
     
     func save(_ review: Review,
               at movie: String,
               completion: @escaping (Result<Void, FirebaseError>) -> Void) {
         let reviewData: [String: Any] = [
-            "nickName": review.nickName,
-            "password": review.password,
-            "rating": review.rating,
-            "content": review.content,
-            "imageURL": review.imageURL
+            ReviewData.nickName: review.nickName,
+            ReviewData.password: review.password,
+            ReviewData.rating: review.rating,
+            ReviewData.content: review.content,
+            ReviewData.imageURL: review.imageURL
         ]
 
         firestoreManager.save(reviewData,
@@ -55,11 +63,11 @@ final class ReviewFirebaseUseCase {
 
 extension ReviewFirebaseUseCase {
     private func toReview(from document: QueryDocumentSnapshot) -> Review? {
-        guard let nickName = document["nickName"] as? String,
-              let password = document["password"] as? String,
-              let rating = document["rating"] as? String,
-              let content = document["content"] as? String,
-              let imageURL = document["imageURL"] as? String else { return nil }
+        guard let nickName = document[ReviewData.nickName] as? String,
+              let password = document[ReviewData.password] as? String,
+              let rating = document[ReviewData.rating] as? String,
+              let content = document[ReviewData.content] as? String,
+              let imageURL = document[ReviewData.imageURL] as? String else { return nil }
         
         return Review(nickName: nickName,
                       password: password,
