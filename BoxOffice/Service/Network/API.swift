@@ -21,7 +21,8 @@ extension API {
         
         return client.requestData(with: urlRequest)
             .map { data in
-                return try JSONDecoder().decode(ResponseType.self, from: data)
+                let result = try JSONDecoder().decode(ResponseType.self, from: data)
+                return result
             }
     }
 }

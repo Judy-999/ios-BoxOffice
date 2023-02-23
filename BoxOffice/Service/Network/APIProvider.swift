@@ -20,7 +20,7 @@ final class APIProvider {
     func requestData(with urlRequest: URLRequest) -> Observable<Data> {
         return URLSession.shared.rx.response(request: urlRequest)
             .filter { response, data in
-                200..<300 ~= response.statusCode
+                200..<400 ~= response.statusCode
             }
             .map { _, data -> Data in
                 return data
