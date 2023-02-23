@@ -47,14 +47,10 @@ final class HomeViewController: UIViewController {
         indicator.frame = view.frame
         return indicator
     }()
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        requestInitialData()
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        requestInitialData()
         setupView()
         bind()
     }

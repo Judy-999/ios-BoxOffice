@@ -32,6 +32,8 @@ final class HomeCollectionView: UICollectionView {
     
     func appendDailySnapshot(with cellDatas: [MovieData]) {
         guard cellDatas.count == 10 else { return }
+        snapshot.deleteAllItems()
+        snapshot.appendSections([.main])
         snapshot.appendItems(cellDatas)
         homeDataSource?.apply(snapshot, animatingDifferences: true)
     }
