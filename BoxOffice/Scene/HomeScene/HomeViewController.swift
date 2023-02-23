@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxSwift
 
 enum BoxOfficeMode: Int, CaseIterable {
     case daily
@@ -26,6 +27,7 @@ final class HomeViewController: UIViewController {
     private let homeViewModel = HomeViewModel()
     private var searchingDate: Date = Date().previousDate(to: -7)
     private var viewMode: BoxOfficeMode = .daily
+    private let disposeBag = DisposeBag()
     
     private let viewModeChangeButton: UIButton = {
         let button = UIButton()
@@ -48,9 +50,7 @@ final class HomeViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        Task {
-            try await requestInitialData()
-        }
+        requestInitialData()
     }
 
     override func viewDidLoad() {
@@ -98,51 +98,53 @@ final class HomeViewController: UIViewController {
     
     private func bind() {
         homeViewModel.dailyMovieCellDatas
-            .bind { [weak self] cellDatas in
-                let rankSortedCellDatas = cellDatas.sorted {
+            .map {
+                $0.sorted {
                     Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
                 }
-                
-                DispatchQueue.main.async {
-                    self?.homeCollectionView.appendDailySnapshot(with: rankSortedCellDatas)
-                }
             }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] cellDatas in
+                self?.homeCollectionView.appendDailySnapshot(with: cellDatas)
+            })
+            .disposed(by: disposeBag)
         
         homeViewModel.allWeekMovieCellDatas
-            .bind { [weak self] cellDatas in
-                let rankSortedCellDatas = cellDatas.sorted {
+            .map {
+                $0.sorted {
                     Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
                 }
-                
-                DispatchQueue.main.async {
-                    self?.homeCollectionView.appendAllWeekSnapshot(data: rankSortedCellDatas)
-                }
             }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] cellDatas in
+                    self?.homeCollectionView.appendAllWeekSnapshot(data: cellDatas)
+            })
+            .disposed(by: disposeBag)
         
         homeViewModel.weekEndMovieCellDatas
-            .bind { [weak self] cellDatas in
-                let rankSortedCellDatas = cellDatas.sorted {
+            .map {
+                $0.sorted {
                     Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
                 }
-                
-                DispatchQueue.main.async {
-                    self?.homeCollectionView.appendWeekEndSnapshot(data: rankSortedCellDatas)
-                }
             }
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] cellDatas in
+                self?.homeCollectionView.appendWeekEndSnapshot(data: cellDatas)
+            })
+            .disposed(by: disposeBag)
         
         homeViewModel.isLoading
-            .bind { [weak self] isLoading in
-                DispatchQueue.main.async {
-                    isLoading ?
-                    self?.indicatorView.startAnimating() : self?.indicatorView.stopAnimating()
-                }
-            }
-        
-        homeCollectionView.updateDate(searchingDate)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] isLoading in
+                isLoading ?
+                self?.indicatorView.startAnimating() : self?.indicatorView.stopAnimating()
+            })
+            .disposed(by: disposeBag)
     }
     
-    private func requestInitialData() async throws {
-        try await homeViewModel.requestDailyData(with: searchingDate.toString())
+    private func requestInitialData() {
+        homeViewModel.requestDailyData(with: searchingDate.toString(),
+                                                 disposeBag: disposeBag)
     }
     
     @objc private func viewModeChangeButtonTapped() {
@@ -164,7 +166,8 @@ final class HomeViewController: UIViewController {
 // MARK: CollectionView Delegate
 extension HomeViewController: UICollectionViewDelegate {
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView,
+                        didSelectItemAt indexPath: IndexPath) {
         switch viewMode {
         case .daily:
             pushMovieDetail(
@@ -220,15 +223,15 @@ extension HomeViewController: ModeSelectViewControllerDelegate {
         switch viewMode {
         case .daily:
             homeCollectionView.switchMode(.daily)
-            try await homeViewModel.requestDailyData(with: dateText)
+            homeViewModel.requestDailyData(with: dateText,
+                                           disposeBag: disposeBag)
         case .weekly:
             homeCollectionView.switchMode(.weekly)
-            Task {
-                try await homeViewModel.requestAllWeekData(with: dateText)
-            }
-            Task {
-                try await homeViewModel.requestWeekEndData(with: dateText)
-            }
+            homeViewModel.requestAllWeekData(with: dateText,
+                                             disposeBag: disposeBag)
+            
+            homeViewModel.requestWeekEndData(with: dateText,
+                                             disposeBag: disposeBag)
         }
     }
 }
@@ -244,15 +247,14 @@ extension HomeViewController: CalendarViewControllerDelegate {
         
         switch viewMode {
         case .daily:
-            try await homeViewModel.requestDailyData(with: dateText)
+            homeViewModel.requestDailyData(with: dateText,
+                                           disposeBag: disposeBag)
         case .weekly:
-            Task {
-                try await homeViewModel.requestAllWeekData(with: dateText)
-            }
+            homeViewModel.requestAllWeekData(with: dateText,
+                                             disposeBag: disposeBag)
             
-            Task {
-                try await homeViewModel.requestWeekEndData(with: dateText)
-            }
+            homeViewModel.requestWeekEndData(with: dateText,
+                                             disposeBag: disposeBag)
         }
     }
 }

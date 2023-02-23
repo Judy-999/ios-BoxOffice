@@ -6,18 +6,20 @@
 //
 
 import Foundation
+import RxSwift
+import RxRelay
 
 protocol HomeViewModelInput {
-    func requestDailyData(with date: String) async throws
-    func requestAllWeekData(with date: String) async throws
-    func requestWeekEndData(with date: String) async throws
+    func requestDailyData(with date: String, disposeBag: DisposeBag) async throws
+    func requestAllWeekData(with date: String, disposeBag: DisposeBag) async throws
+    func requestWeekEndData(with date: String, disposeBag: DisposeBag) async throws
 }
 
 protocol HomeViewModelOutput {
-    var dailyMovieCellDatas: Observable<[MovieData]> { get }
-    var allWeekMovieCellDatas: Observable<[MovieData]> { get }
-    var weekEndMovieCellDatas: Observable<[MovieData]> { get }
-    var isLoading: Observable<Bool> { get set }
+    var dailyMovieCellDatas: BehaviorRelay<[MovieData]> { get }
+    var allWeekMovieCellDatas: BehaviorRelay<[MovieData]> { get }
+    var weekEndMovieCellDatas: BehaviorRelay<[MovieData]> { get }
+    var isLoading: PublishRelay<Bool> { get set }
 }
 
 protocol HomeViewModelType: HomeViewModelInput, HomeViewModelOutput {}
@@ -25,30 +27,39 @@ protocol HomeViewModelType: HomeViewModelInput, HomeViewModelOutput {}
 final class HomeViewModel: HomeViewModelType {
     private let movieAPIUseCase = MovieAPIUseCase()
     
-    var dailyMovieCellDatas = Observable<[MovieData]>([])
-    var allWeekMovieCellDatas = Observable<[MovieData]>([])
-    var weekEndMovieCellDatas = Observable<[MovieData]>([])
-    var isLoading = Observable<Bool>(true)
+    var dailyMovieCellDatas = BehaviorRelay<[MovieData]>(value: [])
+    var allWeekMovieCellDatas = BehaviorRelay<[MovieData]>(value:[])
+    var weekEndMovieCellDatas = BehaviorRelay<[MovieData]>(value:[])
+    var isLoading = PublishRelay<Bool>()
     
     
-    func requestDailyData(with date: String) async throws {
-        isLoading.value = true
-        try await movieAPIUseCase.requestDailyData(with: date,
-                                                   in: dailyMovieCellDatas)
-        isLoading.value = false
+    func requestDailyData(with date: String, disposeBag: DisposeBag) {
+        isLoading.accept(true)
+        movieAPIUseCase.requestDailyData(with: date)
+            .subscribe(onNext: {
+                self.dailyMovieCellDatas.accept($0)
+                self.isLoading.accept(false)
+            })
+            .disposed(by: disposeBag)
     }
     
-    func requestAllWeekData(with date: String) async throws {
-        isLoading.value = true
-        try await movieAPIUseCase.requestAllWeekData(with: date,
-                                                     in: allWeekMovieCellDatas)
-        isLoading.value = false
+    func requestAllWeekData(with date: String, disposeBag: DisposeBag) {
+        isLoading.accept(true)
+        movieAPIUseCase.requestAllWeekData(with: date)
+            .subscribe(onNext: {
+                self.dailyMovieCellDatas.accept($0)
+                self.isLoading.accept(false)
+            })
+            .disposed(by: disposeBag)
     }
     
-    func requestWeekEndData(with date: String) async throws {
-        isLoading.value = true
-        try await movieAPIUseCase.requestWeekEndData(with: date,
-                                                     in: weekEndMovieCellDatas)
-        isLoading.value = false
+    func requestWeekEndData(with date: String, disposeBag: DisposeBag) {
+        isLoading.accept(true)
+        movieAPIUseCase.requestWeekEndData(with: date)
+            .subscribe(onNext: {
+                self.dailyMovieCellDatas.accept($0)
+                self.isLoading.accept(false)
+            })
+            .disposed(by: disposeBag)
     }
 }
