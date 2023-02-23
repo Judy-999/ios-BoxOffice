@@ -13,7 +13,7 @@ enum WeekOption: String {
     case weekDays = "2"
 }
 
-struct SearchWeeklyBoxOfficeListAPI: API {
+struct WeeklyBoxOfficeListAPI: API {
     typealias ResponseType = WeeklyBoxOfficeListResponseDTO
     
     var configuration: MovieRequest

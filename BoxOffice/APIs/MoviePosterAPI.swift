@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SearchMoviePosterAPI: API {
+struct MoviePosterAPI: API {
     typealias ResponseType = MoviePosterResponseDTO
     
     var configuration: MovieRequest
@@ -35,7 +35,7 @@ struct SearchMoviePosterAPI: API {
 }
 
 struct MoviePosterResponseDTO: Decodable {
-    let search: [Movie]
+    let search: [MovieDTO]
     let totalResults: String
     let response: String
     
@@ -52,7 +52,7 @@ struct MoviePosterResponseDTO: Decodable {
     }
 }
 
-struct Movie: Decodable {
+struct MovieDTO: Decodable {
     let title: String
     let year: String
     let imdbID: String

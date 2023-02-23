@@ -12,7 +12,7 @@ struct MovieAPIUseCase {
     private let imageCacheManager = URLCacheManager()
     
     func requestDailyData(with date: String) -> Observable<[MovieData]> {
-        let searchDailyBoxOfficeListAPI = SearchDailyBoxOfficeListAPI(date: date)
+        let searchDailyBoxOfficeListAPI = DailyBoxOfficeListAPI(date: date)
         let result = searchDailyBoxOfficeListAPI.execute()
         let dailyBoxOfficeList = result.compactMap {
             $0.boxOfficeResult.dailyBoxOfficeList
@@ -24,7 +24,7 @@ struct MovieAPIUseCase {
     }
     
     func requestAllWeekData(with date: String) -> Observable<[MovieData]> {
-        let searchWeeklyBoxOfficeListAPI = SearchWeeklyBoxOfficeListAPI(date: date,
+        let searchWeeklyBoxOfficeListAPI = WeeklyBoxOfficeListAPI(date: date,
                                                                         weekOption: .allWeek)
         let result = searchWeeklyBoxOfficeListAPI.execute()
         let weeklyBoxOfficeList = result.compactMap {
@@ -37,7 +37,7 @@ struct MovieAPIUseCase {
     }
     
     func requestWeekEndData(with date: String) -> Observable<[MovieData]> {
-        let searchWeeklyBoxOfficeListAPI = SearchWeeklyBoxOfficeListAPI(date: date,
+        let searchWeeklyBoxOfficeListAPI = WeeklyBoxOfficeListAPI(date: date,
                                                                         weekOption: .weekEnd)
         let result = searchWeeklyBoxOfficeListAPI.execute()
         let weeklyBoxOfficeList = result.compactMap {
@@ -49,7 +49,7 @@ struct MovieAPIUseCase {
         return task(weeklyBoxOfficeList)
     }
     
-    private func task(_ list: Observable<BoxOffice>) -> Observable<[MovieData]> {
+    private func task(_ list: Observable<BoxOfficeDTO>) -> Observable<[MovieData]> {
         let movieInfoList = list.flatMap { boxOffice in
             fetchMovieDetailInfo(with: boxOffice.movieCd)
         }
@@ -90,8 +90,8 @@ struct MovieAPIUseCase {
         return movieDatas.asObservable()
     }
 
-    private func fetchMovieDetailInfo(with movieCode: String) -> Observable<MovieInfo> {
-        let searchMovieInfoAPI = SearchMovieInfoAPI(movieCode: movieCode)
+    private func fetchMovieDetailInfo(with movieCode: String) -> Observable<MovieInfoDTO> {
+        let searchMovieInfoAPI = MovieInfoAPI(movieCode: movieCode)
         
         return searchMovieInfoAPI.execute()
             .compactMap { movieInfoResponseDTO in
@@ -100,7 +100,7 @@ struct MovieAPIUseCase {
     }
     
     private func fetchMoviePosterURL(with movieName: String, year: String?) -> Observable<String?> {
-        let searchMoviePosterAPI = SearchMoviePosterAPI(movieTitle: movieName, year: year)
+        let searchMoviePosterAPI = MoviePosterAPI(movieTitle: movieName, year: year)
         
         return searchMoviePosterAPI.execute()
             .map { $0.posterURL }

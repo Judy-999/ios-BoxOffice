@@ -9,11 +9,11 @@ import XCTest
 @testable import BoxOffice
 
 final class SearchWeeklyBoxOfficeListAPITests: XCTestCase {
-    var sut: SearchWeeklyBoxOfficeListAPI!
+    var sut: WeeklyBoxOfficeListAPI!
     
     override func setUpWithError() throws {
         try super.setUpWithError()
-        sut = SearchWeeklyBoxOfficeListAPI(date: "20221010", weekOption: .allWeek)
+        sut = WeeklyBoxOfficeListAPI(date: "20221010", weekOption: .allWeek)
     }
 
     override func tearDownWithError() throws {

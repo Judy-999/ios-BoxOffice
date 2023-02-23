@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct SearchDailyBoxOfficeListAPI: API {
+struct DailyBoxOfficeListAPI: API {
     typealias ResponseType = DailyBoxOfficeListResponseDTO
     
     var configuration: MovieRequest
@@ -33,26 +33,16 @@ struct BoxOfficeResult: Decodable {
     let boxofficeType: String
     let showRange: String
     let yearWeekTime: String?
-    let dailyBoxOfficeList: [BoxOffice]?
-    let weeklyBoxOfficeList: [BoxOffice]?
+    let dailyBoxOfficeList: [BoxOfficeDTO]?
+    let weeklyBoxOfficeList: [BoxOfficeDTO]?
 }
 
-struct BoxOffice: Decodable {
+struct BoxOfficeDTO: Decodable {
     let rnum: String
     let rank: String
     let rankInten: String
     let rankOldAndNew: String
     let movieCd: String
     let movieNm: String
-    let salesAmt: String
-    let salesShare: String
-    let salesInten: String
-    let salesChange: String
-    let salesAcc: String
-    let audiCnt: String
-    let audiInten: String
-    let audiChange: String
     let audiAcc: String
-    let scrnCnt: String
-    let showCnt: String
 }
