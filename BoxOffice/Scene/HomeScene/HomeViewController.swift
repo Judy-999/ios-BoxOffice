@@ -68,7 +68,6 @@ final class HomeViewController: UIViewController {
         setupInitialView()
         setupNavigationBar()
         setupCollectionView()
-        setupButton()
     }
     
     private func setupInitialView() {
@@ -95,12 +94,6 @@ final class HomeViewController: UIViewController {
                                     withReuseIdentifier: "headerView")
     }
     
-    private func setupButton() {
-        viewModeChangeButton.addTarget(self,
-                                       action: #selector(viewModeChangeButtonTapped),
-                                       for: .touchUpInside)
-    }
-    
     private func bind() {
         homeViewModel.dailyMovieCellDatas
             .observe(on: MainScheduler.instance)
@@ -113,15 +106,18 @@ final class HomeViewController: UIViewController {
                        homeViewModel.weekEndMovieCellDatas)
         .subscribe(onNext: { [weak self] allWeek, weekEnd in
             self?.homeCollectionView.appendWeekSnapshot(allWeek: allWeek,
-                                                       weekEnd: weekEnd)
+                                                        weekEnd: weekEnd)
         })
         .disposed(by: disposeBag)
         
         homeViewModel.isLoading
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] isLoading in
-                isLoading ?
-                self?.indicatorView.startAnimating() : self?.indicatorView.stopAnimating()
+            .asDriver(onErrorJustReturn: false)
+            .drive(indicatorView.rx.isAnimating)
+            .disposed(by: disposeBag)
+        
+        viewModeChangeButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                self?.viewModeChangeButtonTapped()
             })
             .disposed(by: disposeBag)
     }
@@ -131,7 +127,7 @@ final class HomeViewController: UIViewController {
                                                  disposeBag: disposeBag)
     }
     
-    @objc private func viewModeChangeButtonTapped() {
+    private func viewModeChangeButtonTapped() {
         let modeSelectViewController = ModeSelectViewController(passMode: viewMode)
         modeSelectViewController.delegate = self
         
@@ -174,10 +170,7 @@ extension HomeViewController: UICollectionViewDelegate {
     }
     
     private func pushMovieDetail(in cellDatas: [MovieData], at index: Int) {
-        let rankSortedCellDatas = cellDatas.sorted {
-            Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
-        }
-        let tappedCellData = rankSortedCellDatas[index]
+        let tappedCellData = cellDatas[index]
         let movieDetailViewController = MovieDetailViewController(movieDetail: tappedCellData)
         navigationController?.pushViewController(movieDetailViewController, animated: true)
     }
