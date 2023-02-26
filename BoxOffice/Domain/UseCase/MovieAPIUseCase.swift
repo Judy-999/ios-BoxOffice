@@ -62,8 +62,9 @@ struct MovieAPIUseCase {
                 return imageCacheManager.getImage(with: URL(string: url))
             }
             
-            return Observable<UIImage?>.just(nil)
-        }
+            return Observable<UIImage?>.just(BoxOfficeImage.posterPlacehorder)
+        }.catchAndReturn(BoxOfficeImage.posterPlacehorder)
+            
         
         let movieDatas = Observable.zip(list, movieInfoList, posterList) { boxOffice, movieInfo, image in
             MovieData(
@@ -78,13 +79,13 @@ struct MovieAPIUseCase {
                 productionYear: movieInfo.prdtYear,
                 openYear: String(movieInfo.openDt.prefix(4)),
                 showTime: movieInfo.showTm,
-                genreName: movieInfo.genres.count > 0 ? movieInfo.genres[0].genreNm : "",
-                directorName: movieInfo.directors.count > 0 ? movieInfo.directors[0].peopleNm : "",
-                actors: movieInfo.actors.count > 0 ? movieInfo.actors.map { $0.peopleNm } : [] ,
-                ageLimit: movieInfo.audits.count > 0 ? movieInfo.audits[0].watchGradeNm : ""
+                genreName: movieInfo.genres.first?.genreNm ?? "정보없음",
+                directorName: movieInfo.directors.first?.peopleNm ?? "정보없음",
+                actors: movieInfo.actors.map { $0.peopleNm },
+                ageLimit: movieInfo.audits.first?.watchGradeNm ?? "X"
             )
         }
-        .take(10)
+        .take(10) 
         .toArray()
         
         return movieDatas.asObservable()
@@ -104,5 +105,8 @@ struct MovieAPIUseCase {
         
         return searchMoviePosterAPI.execute()
             .map { $0.posterURL }
+            .catchAndReturn(nil)
+    }
+}
     }
 }
