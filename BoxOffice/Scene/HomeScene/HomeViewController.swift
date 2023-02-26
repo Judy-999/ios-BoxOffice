@@ -103,40 +103,19 @@ final class HomeViewController: UIViewController {
     
     private func bind() {
         homeViewModel.dailyMovieCellDatas
-            .map {
-                $0.sorted {
-                    Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
-                }
-            }
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] cellDatas in
                 self?.homeCollectionView.appendDailySnapshot(with: cellDatas)
             })
             .disposed(by: disposeBag)
-        
-        homeViewModel.allWeekMovieCellDatas
-            .map {
-                $0.sorted {
-                    Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
-                }
-            }
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] cellDatas in
-                    self?.homeCollectionView.appendAllWeekSnapshot(data: cellDatas)
-            })
-            .disposed(by: disposeBag)
-        
-        homeViewModel.weekEndMovieCellDatas
-            .map {
-                $0.sorted {
-                    Int($0.currentRank) ?? 0 < Int($1.currentRank) ?? 0
-                }
-            }
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] cellDatas in
-                self?.homeCollectionView.appendWeekEndSnapshot(data: cellDatas)
-            })
-            .disposed(by: disposeBag)
+
+        Observable.zip(homeViewModel.allWeekMovieCellDatas,
+                       homeViewModel.weekEndMovieCellDatas)
+        .subscribe(onNext: { [weak self] allWeek, weekEnd in
+            self?.homeCollectionView.appendWeekSnapshot(allWeek: allWeek,
+                                                       weekEnd: weekEnd)
+        })
+        .disposed(by: disposeBag)
         
         homeViewModel.isLoading
             .observe(on: MainScheduler.instance)
@@ -217,7 +196,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: ModalView Delegate
 extension HomeViewController: ModeSelectViewControllerDelegate {
-    func didSelectedRowAt(indexPath: Int) async throws {
+    func didSelectedRowAt(indexPath: Int) {
         guard let mode = BoxOfficeMode(rawValue: indexPath) else { return }
         
         viewMode = mode
@@ -232,18 +211,15 @@ extension HomeViewController: ModeSelectViewControllerDelegate {
                                            disposeBag: disposeBag)
         case .weekly:
             homeCollectionView.switchMode(.weekly)
-            homeViewModel.requestAllWeekData(with: dateText,
-                                             disposeBag: disposeBag)
-            
-            homeViewModel.requestWeekEndData(with: dateText,
-                                             disposeBag: disposeBag)
+            homeViewModel.requestWeeklyDate(with: dateText,
+                                            disposeBag: disposeBag)
         }
     }
 }
 
 // MARK: CalendarView Delegate
 extension HomeViewController: CalendarViewControllerDelegate {
-    func searchButtonTapped(date: Date) async throws {
+    func searchButtonTapped(date: Date) {
         searchingDate = date
         homeCollectionView.updateDate(date)
         
@@ -255,11 +231,8 @@ extension HomeViewController: CalendarViewControllerDelegate {
             homeViewModel.requestDailyData(with: dateText,
                                            disposeBag: disposeBag)
         case .weekly:
-            homeViewModel.requestAllWeekData(with: dateText,
-                                             disposeBag: disposeBag)
-            
-            homeViewModel.requestWeekEndData(with: dateText,
-                                             disposeBag: disposeBag)
+            homeViewModel.requestWeeklyDate(with: dateText,
+                                            disposeBag: disposeBag)
         }
     }
 }

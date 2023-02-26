@@ -11,8 +11,7 @@ import RxRelay
 
 protocol HomeViewModelInput {
     func requestDailyData(with date: String, disposeBag: DisposeBag)
-    func requestAllWeekData(with date: String, disposeBag: DisposeBag)
-    func requestWeekEndData(with date: String, disposeBag: DisposeBag) 
+    func requestWeeklyDate(with date: String, disposeBag: DisposeBag)
 }
 
 protocol HomeViewModelOutput {
@@ -36,29 +35,33 @@ final class HomeViewModel: HomeViewModelType {
         isLoading.accept(true)
         movieAPIUseCase.requestDailyData(with: date)
             .subscribe(onNext: { [weak self] in
-                self?.dailyMovieCellDatas.accept($0)
+                self?.dailyMovieCellDatas.accept($0)},
+                       onCompleted: { [weak self] in
                 self?.isLoading.accept(false)
             })
             .disposed(by: disposeBag)
     }
     
-    func requestAllWeekData(with date: String, disposeBag: DisposeBag) {
+    func requestWeeklyDate(with date: String, disposeBag: DisposeBag) {
+        let allWeek = movieAPIUseCase.requestAllWeekData(with: date)
+        let weekend = movieAPIUseCase.requestWeekEndData(with: date)
+        
         isLoading.accept(true)
-        movieAPIUseCase.requestAllWeekData(with: date)
-            .subscribe(onNext: { [weak self] in
-                self?.dailyMovieCellDatas.accept($0)
-                self?.isLoading.accept(false)
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    func requestWeekEndData(with date: String, disposeBag: DisposeBag) {
-        isLoading.accept(true)
-        movieAPIUseCase.requestWeekEndData(with: date)
-            .subscribe(onNext: { [weak self] in
-                self?.dailyMovieCellDatas.accept($0)
-                self?.isLoading.accept(false)
-            })
-            .disposed(by: disposeBag)
+        
+        allWeek.subscribe(onNext: { [weak self] in
+            self?.allWeekMovieCellDatas.accept($0)
+        })
+        .disposed(by: disposeBag)
+        
+        weekend.subscribe(onNext: { [weak self] in
+            self?.weekEndMovieCellDatas.accept($0)
+        })
+        .disposed(by: disposeBag)
+        
+        Observable.zip(allWeek, weekend)
+        .subscribe(onNext: { _, _ in
+            self.isLoading.accept(false)
+        })
+        .disposed(by: disposeBag)
     }
 }

@@ -31,22 +31,19 @@ final class HomeCollectionView: UICollectionView {
     }
     
     func appendDailySnapshot(with cellDatas: [MovieData]) {
-        guard cellDatas.count == 10 else { return }
+        guard cellDatas.count > 0 else { return }
         snapshot.deleteAllItems()
         snapshot.appendSections([.main])
         snapshot.appendItems(cellDatas)
         homeDataSource?.apply(snapshot, animatingDifferences: true)
     }
     
-    func appendAllWeekSnapshot(data: [MovieData]) {
-        guard data.count == 10 else { return }
-        snapshot.appendItems(data, toSection: .allWeek)
-        homeDataSource?.apply(snapshot, animatingDifferences: true)
-    }
-    
-    func appendWeekEndSnapshot(data: [MovieData]) {
-        guard data.count == 10 else { return }
-        snapshot.appendItems(data, toSection: .weekEnd)
+    func appendWeekSnapshot(allWeek: [MovieData], weekEnd: [MovieData]) {
+        guard allWeek.count > 0, weekEnd.count > 0 else { return }
+        snapshot.deleteAllItems()
+        snapshot.appendSections([.allWeek, .weekEnd])
+        snapshot.appendItems(allWeek, toSection: .allWeek)
+        snapshot.appendItems(weekEnd, toSection: .weekEnd)
         homeDataSource?.apply(snapshot, animatingDifferences: true)
     }
     
