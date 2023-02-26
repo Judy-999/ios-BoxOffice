@@ -67,7 +67,7 @@ final class GridCell: UICollectionViewCell {
 
     private let currentRankLabel: UILabel = {
         let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .largeTitle)
+        label.font = .preferredFont(forTextStyle: .title2)
         label.font = .boldSystemFont(ofSize: label.font.pointSize)
         label.textColor = .white
         label.backgroundColor = .black
@@ -164,7 +164,7 @@ private extension GridCell {
             
             currentRankLabel.topAnchor.constraint(equalTo: posterImageView.topAnchor),
             currentRankLabel.leadingAnchor.constraint(equalTo: posterImageView.leadingAnchor),
-            currentRankLabel.widthAnchor.constraint(equalTo: posterImageView.widthAnchor, multiplier: 1/5),
+            currentRankLabel.widthAnchor.constraint(equalTo: posterImageView.widthAnchor, multiplier: 0.2),
             currentRankLabel.heightAnchor.constraint(equalTo: currentRankLabel.widthAnchor),
             
             posterImageView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.7),
