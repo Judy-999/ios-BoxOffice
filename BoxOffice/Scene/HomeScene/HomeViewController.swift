@@ -24,7 +24,7 @@ enum BoxOfficeMode: Int, CaseIterable {
 
 final class HomeViewController: UIViewController {
     private lazy var homeCollectionView = HomeCollectionView(searchDate: searchingDate)
-    private let homeViewModel = HomeViewModel()
+    private let homeViewModel: HomeViewModelType
     private var searchingDate: Date = Date().previousDate(to: -7)
     private var viewMode: BoxOfficeMode = .daily
     private let disposeBag = DisposeBag()
@@ -47,7 +47,16 @@ final class HomeViewController: UIViewController {
         indicator.frame = view.frame
         return indicator
     }()
-
+    
+    init(_ viewModel :HomeViewModelType) {
+        self.homeViewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         requestInitialData()
