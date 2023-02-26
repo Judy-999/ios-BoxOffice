@@ -50,14 +50,14 @@ struct MovieAPIUseCase {
     }
     
     private func task(_ list: Observable<BoxOfficeDTO>) -> Observable<[MovieData]> {
-        let movieInfoList = list.flatMap { boxOffice in
+        let movieInfoList = list.concatMap { boxOffice in
             fetchMovieDetailInfo(with: boxOffice.movieCd)
         }
-        
-        let posterList = movieInfoList.flatMap { movieInfo in
+
+        let posterList = movieInfoList.concatMap { movieInfo in
             fetchMoviePosterURL(with: movieInfo.movieNmEn,
                                 year: String(movieInfo.prdtYear.prefix(4)))
-        }.flatMap { posterURL in
+        }.concatMap { posterURL in
             if let url = posterURL {
                 return imageCacheManager.getImage(with: URL(string: url))
             }
@@ -85,7 +85,7 @@ struct MovieAPIUseCase {
                 ageLimit: movieInfo.audits.first?.watchGradeNm ?? "X"
             )
         }
-        .take(10) 
+        .take(10)
         .toArray()
         
         return movieDatas.asObservable()
