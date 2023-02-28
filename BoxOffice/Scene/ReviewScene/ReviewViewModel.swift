@@ -9,8 +9,9 @@ import RxSwift
 import RxRelay
 
 protocol ReviewViewModelInput {
-    func save(_ review: Review, at movieKey: String)
-    func fetch(at movieKey: String)
+    func save(_ review: Review, at movieKey: String, bag: DisposeBag)
+    func fetch(at movieKey: String, bag: DisposeBag)
+    func delete(_ review: Review, at movieKey: String, bag: DisposeBag)
 }
 
 protocol ReviewViewModelOutput {
@@ -30,51 +31,52 @@ final class MovieReviewViewModel: ReviewViewModelType {
     var error = PublishRelay<String>()
     
     /// Input
-    func save(_ review: Review, at movieKey: String) {
-        reviewFirebaseUseCase.save(review, at: movieKey) { result in
-            switch result {
-            case .success(_):
-                break
-            case .failure(let error):
-                self.error.accept(error.localizedDescription)
-            }
-        }
+    func save(_ review: Review, at movieKey: String, bag: DisposeBag) {
+        reviewFirebaseUseCase.save(review, at: movieKey)
+            .subscribe(onError: { [weak self] error in
+                self?.error.accept(error.localizedDescription)
+            })
+            .disposed(by: bag)
         
-        fetch(at: movieKey)
+        fetch(at: movieKey, bag: bag)
     }
     
-    func fetch(at movieKey: String) {
-        reviewFirebaseUseCase.fetch(at: movieKey) { [weak self] result in
-            switch result {
-            case .success(let reviews):
+    func fetch(at movieKey: String, bag: DisposeBag) {
+        reviewFirebaseUseCase.fetch(at: movieKey)
+            .subscribe(onNext: { [weak self] reviews in
                 self?.reviews.accept(reviews)
-                self?.calculateRating()
-            case .failure(let error):
+                self?.calculateRating(bag: bag)
+            }, onError: { [weak self]  error in
                 self?.error.accept(error.localizedDescription)
-            }
-        }
+            })
+            .disposed(by: bag)
     }
     
-    func delete(_ review: Review, at movieKey: String) {
-        reviewFirebaseUseCase.delete(review, at: movieKey) { [weak self] result in
-            switch result {
-            case .success(_):
-                break
-            case .failure(let error):
+    func delete(_ review: Review, at movieKey: String, bag: DisposeBag) {
+        reviewFirebaseUseCase.delete(review, at: movieKey)
+            .subscribe(onError: { [weak self] error in
                 self?.error.accept(error.localizedDescription)
-            }
-        }
+            })
+            .disposed(by: bag)
         
-        fetch(at: movieKey)
+        fetch(at: movieKey, bag: bag)
     }
     
-    func calculateRating() {
-        let ratings = reviews.value.map { $0.rating }
-        let ratingValues = ratings.compactMap { Double($0) }
-        let ratingSum = ratingValues.reduce(0, +)
-        let result = String(format: "%.1f", ratingSum / Double(ratingValues.count))
-        
-        rating.accept(result)
+    private func calculateRating(bag: DisposeBag) {
+        reviews
+            .map { reviews in
+                reviews.compactMap { review in
+                    Double(review.rating)
+                }
+            }
+            .map { ratings in
+                ratings.reduce(Double.zero, +) / Double(ratings.count)
+            }
+            .map {
+                String(format: "%.1f", $0)
+            }
+            .bind(to: rating)
+            .disposed(by: bag)
     }
 }
 

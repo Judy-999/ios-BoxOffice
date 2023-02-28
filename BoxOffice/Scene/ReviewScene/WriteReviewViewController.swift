@@ -168,7 +168,7 @@ extension WriteReviewViewController {
         guard let newReview = createReview() else { return }
         let movieKey = movie.title + movie.openYear
         
-        reviewViewModel.save(newReview, at: movieKey)
+        reviewViewModel.save(newReview, at: movieKey, bag: disposeBag)
         navigationController?.popViewController(animated: true)
     }
     

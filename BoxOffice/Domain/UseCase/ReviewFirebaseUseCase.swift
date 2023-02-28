@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxSwift
 import FirebaseFirestore
 
 final class ReviewFirebaseUseCase {
@@ -19,9 +20,7 @@ final class ReviewFirebaseUseCase {
     
     private let firestoreManager = FirestoreManager.shared
     
-    func save(_ review: Review,
-              at movie: String,
-              completion: @escaping (Result<Void, FirebaseError>) -> Void) {
+    func save(_ review: Review, at movie: String) -> Observable<Void> {
         let reviewData: [String: Any] = [
             ReviewData.nickName: review.nickName,
             ReviewData.password: review.password,
@@ -30,34 +29,24 @@ final class ReviewFirebaseUseCase {
             ReviewData.imageURL: review.imageURL
         ]
 
-        firestoreManager.save(reviewData,
-                              at: movie,
-                              with: review.nickName + review.password,
-                              completion: completion)
+        return firestoreManager.save(reviewData,
+                                     at: movie,
+                                     with: review.nickName + review.password)
     }
 
-    func fetch(at movie: String,
-               completion: @escaping (Result<[Review], FirebaseError>) -> Void) {
-        firestoreManager.fetch(at: movie) { [weak self] result in
-            switch result {
-            case .success(let documents):
-                let reviews = documents.compactMap {
-                    return self?.toReview(from: $0)
+    func fetch(at movie: String) -> Observable<[Review]> {
+        return firestoreManager.fetch(at: movie)
+            .map {
+                $0.compactMap { [weak self] in
+                    self?.toReview(from: $0)
                 }
-                
-                completion(.success(reviews))
-            case .failure(let error):
-                completion(.failure(error))
             }
-        }
+            .catchAndReturn([])
     }
 
-    func delete(_ review: Review,
-                at movie: String,
-                completion: @escaping (Result<Void, FirebaseError>) -> Void) {
-        firestoreManager.delete(with: review.nickName + review.password,
-                                at: movie,
-                                completion: completion)
+    func delete(_ review: Review, at movie: String) -> Observable<Void> {
+        return firestoreManager.delete(with: review.nickName + review.password,
+                                       at: movie)
     }
 }
 

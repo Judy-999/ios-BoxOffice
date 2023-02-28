@@ -12,7 +12,6 @@ final class MovieDetailViewController: UIViewController {
     private let entireStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = 0
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -55,7 +54,7 @@ final class MovieDetailViewController: UIViewController {
     
     private func loadReview() {
         let movieKey = movieDetail.title + movieDetail.openYear
-        reviewViewModel.fetch(at: movieKey)
+        reviewViewModel.fetch(at: movieKey, bag: disposeBag)
     }
     
     private func bind() {
@@ -207,7 +206,8 @@ extension MovieDetailViewController {
             let inputPassword = checkPasswordAlert.textFields?.first?.text
             if inputPassword == review.password {
                 reviewViewModel.delete(review,
-                                       at: movieDetail.title + movieDetail.openYear)
+                                       at: movieDetail.title + movieDetail.openYear,
+                                       bag: disposeBag)
             } else {
                 showAlert(title: "리뷰 삭제 실패",
                           message: "암호가 일치하지 않습니다.")

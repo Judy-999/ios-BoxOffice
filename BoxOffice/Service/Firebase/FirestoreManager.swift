@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxSwift
 import FirebaseFirestore
 
 final class FirestoreManager {
@@ -16,39 +17,48 @@ final class FirestoreManager {
     
     func save(_ data: [String: Any],
               at collection: String,
-              with id: String,
-              completion: @escaping (Result<Void, FirebaseError>) -> Void) {
-        database.collection(collection).document(id).setData(data) { error in
-            if error != nil {
-                completion(.failure(.save))
+              with id: String) -> Observable<Void> {
+        return Observable.create { [weak self] emitter in
+            self?.database.collection(collection).document(id).setData(data) { error in
+                if error != nil {
+                    emitter.onError(FirebaseError.save)
+                }
+                
+                emitter.onCompleted()
             }
             
-            completion(.success(()))
+            return Disposables.create()
         }
     }
-    
-    func delete(with id: String,
-                at collection: String,
-                completion: @escaping (Result<Void, FirebaseError>) -> Void) {
-        database.collection(collection).document(id).delete { error in
-            if error != nil {
-                completion(.failure(.delete))
+
+    func delete(with id: String, at collection: String) -> Observable<Void> {
+        return Observable.create { [weak self] emitter in
+            self?.database.collection(collection).document(id).delete { error in
+                if error != nil {
+                    emitter.onError(FirebaseError.delete)
+                }
+                
+                emitter.onCompleted()
             }
             
-            completion(.success(()))
+            return Disposables.create()
         }
     }
-    
-    func fetch(at collection: String,
-                completion: @escaping (Result<[QueryDocumentSnapshot], FirebaseError>) -> Void) {
-        database.collection(collection).getDocuments { querySnapshot, error in
-            if error != nil {
-                completion(.failure(.fetch))
+
+    func fetch(at collection: String) -> Observable<[QueryDocumentSnapshot]> {
+        return Observable.create { [weak self] emitter in
+            self?.database.collection(collection).getDocuments { querySnapshot, error in
+                if error != nil {
+                    emitter.onError(FirebaseError.fetch)
+                }
+                
+                if let documents = querySnapshot?.documents {
+                    emitter.onNext(documents)
+                }
+                emitter.onCompleted()
             }
             
-            if let documents = querySnapshot?.documents {
-                completion(.success(documents))
-            }
+            return Disposables.create()
         }
     }
 }
