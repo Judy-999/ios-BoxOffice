@@ -8,20 +8,20 @@
 import RxSwift
 import RxRelay
 
-protocol MovieReviewViewModelInput {
+protocol ReviewViewModelInput {
     func save(_ review: Review, at movieKey: String)
     func fetch(at movieKey: String)
 }
 
-protocol MovieReviewViewModelOutput {
+protocol ReviewViewModelOutput {
     var reviews: BehaviorRelay<[Review]> { get set }
     var rating: PublishRelay<String> { get set }
     var error: PublishRelay<String> { get set }
 }
 
-protocol MovieReviewViewModelType: MovieReviewViewModelInput, MovieReviewViewModelOutput { }
+protocol ReviewViewModelType: ReviewViewModelInput, ReviewViewModelOutput { }
 
-final class MovieReviewViewModel: MovieReviewViewModelType {
+final class MovieReviewViewModel: ReviewViewModelType {
     private let reviewFirebaseUseCase = ReviewFirebaseUseCase()
     
     /// Output
