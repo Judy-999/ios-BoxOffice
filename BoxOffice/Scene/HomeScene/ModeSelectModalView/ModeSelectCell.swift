@@ -17,7 +17,7 @@ final class ModeSelectCell: UITableViewCell {
     private let checkImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(systemName: "checkmark")
+        imageView.image = BoxOfficeImage.checkMark
         return imageView
     }()
     

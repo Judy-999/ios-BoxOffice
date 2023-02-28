@@ -15,7 +15,7 @@ final class ReviewTableViewCell: UITableViewCell {
     
     private let photoImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "person.crop.circle")
+        imageView.image = ReviewInfo.Image.user
         imageView.backgroundColor = .systemGray6
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -23,7 +23,7 @@ final class ReviewTableViewCell: UITableViewCell {
     
     private let starView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "star.fill")
+        imageView.image = ReviewInfo.Image.star
         imageView.tintColor = .systemYellow
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -31,7 +31,7 @@ final class ReviewTableViewCell: UITableViewCell {
     
     private let deleteButton: MoviewButton = {
         let button = MoviewButton()
-        button.setImage(UIImage(systemName: "trash"), for: .normal)
+        button.setImage(ReviewInfo.Image.trash, for: .normal)
         button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         return button

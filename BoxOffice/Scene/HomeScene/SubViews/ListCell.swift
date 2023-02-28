@@ -183,7 +183,3 @@ extension CALayer {
         self.addSublayer(border)
     }
 }
-
-enum BoxOfficeImage {
-    static let posterPlacehorder = UIImage(systemName: "nosign")
-}

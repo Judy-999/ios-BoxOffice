@@ -77,7 +77,7 @@ final class HomeViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        let calendarBarButton = UIBarButtonItem(image: MovieInformation.Image.calendar,
+        let calendarBarButton = UIBarButtonItem(image: BoxOfficeImage.calendar,
                                              style: .done,
                                              target: self,
                                              action: #selector(calendarButtonTapped))
@@ -257,8 +257,4 @@ private extension HomeViewController {
 enum MovieInformation {
     static let mainviewTitle = "영화목록"
     static let dailyBoxOfficeTitle = "▼ 일별 박스오피스"
-    
-    enum Image {
-        static let calendar =  UIImage(systemName: "calendar")
-    }
 }

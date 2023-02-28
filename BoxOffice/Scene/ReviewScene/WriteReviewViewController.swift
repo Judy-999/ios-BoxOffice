@@ -11,7 +11,7 @@ import RxSwift
 final class WriteReviewViewController: UIViewController {
     private let photoButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "photo.on.rectangle.angled"), for: .normal)
+        button.setImage(BoxOfficeImage.photoPlacehorder, for: .normal)
         button.tintColor = .black
         button.backgroundColor = .systemGray6
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -20,7 +20,7 @@ final class WriteReviewViewController: UIViewController {
     
     private let nickNameTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "닉네임을 입력해주세요."
+        textField.placeholder = ReviewInfo.Phrase.nicknamePlaceholder
         textField.borderStyle = .roundedRect
         textField.font = .preferredFont(forTextStyle: .title3)
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -29,7 +29,7 @@ final class WriteReviewViewController: UIViewController {
     
     private let passwordTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "암호를 입력해주세요."
+        textField.placeholder = ReviewInfo.Phrase.passwordPlaceholder
         textField.borderStyle = .roundedRect
         textField.font = .preferredFont(forTextStyle: .title3)
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -155,7 +155,7 @@ final class WriteReviewViewController: UIViewController {
 //MARK: NavigationItem Setting
 extension WriteReviewViewController {
     private func setupNavigationItem() {
-        let saveBarButton = UIBarButtonItem(title: "저장",
+        let saveBarButton = UIBarButtonItem(title: ReviewInfo.Phrase.save,
                                             style: .done,
                                             target: self,
                                             action: #selector(saveBarButtonTapped))
@@ -180,14 +180,14 @@ extension WriteReviewViewController {
         guard nickName.isEmpty == false,
               content.isEmpty == false,
               password.isEmpty == false else {
-            showAlert(title: "저장 실패",
-                      message: "모든 항목을 작성해주세요.")
+            showAlert(title: ReviewInfo.Alert.saveFailure,
+                      message: ReviewInfo.Alert.insufficient)
             return nil
         }
         
         if validatePassword() == false {
-            showAlert(title: "암호 확인",
-                      message: "암호는 6~20자리로 숫자, 영문 소문자, 특수문자(!, @, #, $)를 포함해야 합니다.")
+            showAlert(title: ReviewInfo.Alert.confirm,
+                      message: ReviewInfo.Alert.passwordRule)
             return nil
         }
         
@@ -236,12 +236,12 @@ extension WriteReviewViewController: UITextFieldDelegate {
     }
     
     private func validatePassword() -> Bool {
-        let number = convertToSet("0123456789")
-        let specialCharacters = convertToSet("!@#$")
-        let alphabet = convertToSet("abcdefghijklmnopqrstuvwxyz")
+        let number = convertToSet(ReviewInfo.Password.number)
+        let specialCharacters = convertToSet(ReviewInfo.Password.specialSymbol)
+        let alphabet = convertToSet(ReviewInfo.Password.alphabet)
         let checkingPassword = convertToSet(password)
         
-        guard (6...20).contains(password.count),
+        guard ReviewInfo.Password.numberRange ~= password.count,
               checkingPassword.intersection(number).isEmpty == false,
               checkingPassword.intersection(specialCharacters).isEmpty == false,
               checkingPassword.intersection(alphabet).isEmpty == false else {
@@ -263,7 +263,8 @@ extension WriteReviewViewController: UITextFieldDelegate {
     
     private func hidePasswordText(with textField: UITextField) {
         if let text = textField.text {
-            textField.text = String(repeating: "*", count: text.count)
+            textField.text = String(repeating: ReviewInfo.Password.hiddenSign,
+                                    count: text.count)
         }
     }
     
@@ -274,7 +275,7 @@ extension WriteReviewViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField,
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
-        if range.length > 0 {
+        if range.length > .zero {
             (1...range.length).forEach { _ in
                 _ = password.popLast()
             }

@@ -26,7 +26,7 @@ final class MovieDetailViewController: UIViewController {
     
     private let emptyLabel: UILabel = {
         let label = UILabel()
-        label.text = "작성된 리뷰가 없습니다."
+        label.text = ReviewInfo.Phrase.emptyReview
         label.textAlignment = .center
         return label
     }()
@@ -182,25 +182,25 @@ extension MovieDetailViewController {
     
     @objc func reviewDeleteButtonTapped(button: UIButton) {
         let review = reviewViewModel.reviews.value[button.tag]
-        let checkPasswordAlert = UIAlertController(title: "리뷰 삭제",
-                                                   message: "암호를 입력해주세요.",
+        let checkPasswordAlert = UIAlertController(title: ReviewInfo.Alert.delete,
+                                                   message: ReviewInfo.Alert.enterPassword,
                                                    preferredStyle: .alert)
         checkPasswordAlert.addTextField()
         
-        let confirmAction = UIAlertAction(title: "확인", style: .default) { [self] _ in
+        let confirmAction = UIAlertAction(title: ReviewInfo.Alert.ok, style: .default) { [self] _ in
             let inputPassword = checkPasswordAlert.textFields?.first?.text
             if inputPassword == review.password {
                 reviewViewModel.delete(review,
                                        at: movieDetail.title + movieDetail.openYear,
                                        bag: disposeBag)
             } else {
-                showAlert(title: "리뷰 삭제 실패",
-                          message: "암호가 일치하지 않습니다.")
+                showAlert(title: ReviewInfo.Alert.deleteFailure,
+                          message: ReviewInfo.Alert.inconsistency)
             }
         }
         
         checkPasswordAlert.addAction(confirmAction)
-        checkPasswordAlert.addAction(UIAlertAction(title: "취소",
+        checkPasswordAlert.addAction(UIAlertAction(title: ReviewInfo.Alert.cancle,
                                                    style: .cancel))
         present(checkPasswordAlert, animated: true)
     }
@@ -209,7 +209,7 @@ extension MovieDetailViewController {
 //MARK: Setup NavigationItem
 extension MovieDetailViewController {
     private func setupNavigationItem() {
-        let shareBarButton = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up"),
+        let shareBarButton = UIBarButtonItem(image: BoxOfficeImage.share,
                                              style: .plain,
                                              target: self,
                                              action: #selector(shareButtonTapped))

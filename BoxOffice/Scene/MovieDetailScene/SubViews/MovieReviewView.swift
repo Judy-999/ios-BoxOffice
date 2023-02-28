@@ -12,14 +12,14 @@ final class MovieReviewView: UIView {
     private let reviewTableView: UITableView
     
     private let writeReviewButton: MoviewButton = {
-        let button = MoviewButton(title: "리뷰 작성하기")
-        button.setImage(UIImage(systemName: "pencil"), for: .normal)
+        let button = MoviewButton(title: ReviewInfo.Phrase.write)
+        button.setImage(ReviewInfo.Image.pencil, for: .normal)
         button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return button
     }()
     
     private let moreReviewButton: MoviewButton = {
-        let button = MoviewButton(title: "더보기")
+        let button = MoviewButton(title: ReviewInfo.Phrase.more)
         button.layer.borderColor = UIColor.systemGray5.cgColor
         button.layer.borderWidth = 2
         return button
@@ -69,7 +69,7 @@ final class MovieReviewView: UIView {
     private func setupView() {
         addSubView()
         setupConstraint()
-        reviewTitleLabel.text = "리뷰"
+        reviewTitleLabel.text = ReviewInfo.Phrase.review
     }
     
     private func addSubView() {

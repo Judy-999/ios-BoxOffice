@@ -42,7 +42,7 @@ final class MovieSubInfoView: UIView {
     
     private let moreActorsButton: UIButton = {
         let button = UIButton()
-        button.setTitle("더보기", for: .normal)
+        button.setTitle(ReviewInfo.Phrase.more, for: .normal)
         button.setTitleColor(.systemGray, for: .normal)
         button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
         button.translatesAutoresizingMaskIntoConstraints = false
