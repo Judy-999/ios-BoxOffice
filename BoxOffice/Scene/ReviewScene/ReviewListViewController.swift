@@ -57,6 +57,15 @@ final class ReviewListViewController: UIViewController {
     
     private func bind() {
         reviewViewModel.reviews
+            .bind(to: reviewTableView.rx.items(cellIdentifier: ReviewTableViewCell.identifier,
+                                               cellType: ReviewTableViewCell.self)) { index, item, cell in
+                cell.configure(with: item)
+                cell.addTargetDeleteButton(with: self,
+                                           selector: #selector(self.reviewDeleteButtonTapped),
+                                           tag: index)
+            }.disposed(by: disposeBag)
+        
+        reviewViewModel.reviews
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 self?.reviewTableView.reloadData()
@@ -73,29 +82,12 @@ final class ReviewListViewController: UIViewController {
 }
 
 //MARK: Review TableView
-extension ReviewListViewController: UITableViewDataSource {
+extension ReviewListViewController {
     private func setupTableView() {
-        reviewTableView.dataSource = self
         reviewTableView.rowHeight = view.bounds.height * 0.1
         reviewTableView.allowsSelection = false
     }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return reviewViewModel.reviews.value.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ReviewTableViewCell.identifier,
-                                                       for: indexPath) as? ReviewTableViewCell else { return UITableViewCell() }
-        let review = reviewViewModel.reviews.value[indexPath.row]
-        cell.configure(with: review)
-        cell.addTargetDeleteButton(with: self,
-                                   selector: #selector(reviewDeleteButtonTapped),
-                                   tag: indexPath.row)
-        
-        return cell
-    }
-    
+
     @objc private func reviewDeleteButtonTapped(button: UIButton) {
         let review = reviewViewModel.reviews.value[button.tag]
         let checkPasswordAlert = UIAlertController(title: "리뷰 삭제",

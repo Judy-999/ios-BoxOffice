@@ -23,6 +23,13 @@ final class MovieDetailViewController: UIViewController {
                            forCellReuseIdentifier: ReviewTableViewCell.identifier)
         return tableView
     }()
+    
+    private let emptyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "작성된 리뷰가 없습니다."
+        label.textAlignment = .center
+        return label
+    }()
 
     private lazy var movieReviewView = MovieReviewView(tableView: reviewTableView)
     private let movieMainInfoView = MovieMainInfoView()
@@ -65,7 +72,6 @@ final class MovieDetailViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        
         reviewViewModel.rating
             .subscribe(onNext: { [self] rating in
                 movieMainInfoView.configure(with: movieDetail,
@@ -79,54 +85,33 @@ final class MovieDetailViewController: UIViewController {
                 self?.showAlert(message: error)
             })
             .disposed(by: disposeBag)
+        
+        reviewViewModel.reviews
+            .map {
+                !($0.isEmpty)
+            }
+            .asDriver(onErrorJustReturn: false)
+            .drive(emptyLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        reviewViewModel.reviews
+            .map { reviews in
+                return reviews.count > 3 ? Array(reviews[0..<3]) : reviews
+            }
+            .bind(to: reviewTableView.rx.items(cellIdentifier: ReviewTableViewCell.identifier,
+                                               cellType: ReviewTableViewCell.self)) { index, item, cell in
+                cell.configure(with: item)
+                cell.addTargetDeleteButton(with: self,
+                                           selector: #selector(self.reviewDeleteButtonTapped),
+                                           tag: index)
+            }.disposed(by: disposeBag)
     }
-}
-
-//MARK: Review TableView
-extension MovieDetailViewController: UITableViewDataSource {
+    
     private func setupTableView() {
-        reviewTableView.dataSource = self
         reviewTableView.rowHeight = view.bounds.height * 0.1
+        reviewTableView.backgroundView = emptyLabel
         reviewTableView.isScrollEnabled = false
         reviewTableView.allowsSelection = false
-    }
-    
-    private func setupInitialTableView() {
-        let emptyLabel = UILabel()
-        emptyLabel.frame = CGRect(x: .zero, y: .zero, width: view.bounds.width, height: view.bounds.height)
-        emptyLabel.text = "작성된 리뷰가 없습니다."
-        emptyLabel.textAlignment = .center
-        reviewTableView.backgroundView = emptyLabel
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let reviewCount = reviewViewModel.reviews.value.count
-        reviewTableView.backgroundView = .none
-        
-        guard reviewCount != 0 else {
-            setupInitialTableView()
-            movieReviewView.moreButtonState(isEnabled: false)
-            return 0
-        }
-        
-        if reviewCount > 3 {
-            movieReviewView.moreButtonState(isEnabled: true)
-            return 3
-        } else{
-            movieReviewView.moreButtonState(isEnabled: false)
-            return reviewCount
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ReviewTableViewCell.identifier,
-                                                       for: indexPath) as? ReviewTableViewCell else { return UITableViewCell() }
-        let review = reviewViewModel.reviews.value[indexPath.row]
-        cell.configure(with: review)
-        cell.addTargetDeleteButton(with: self,
-                                   selector: #selector(reviewDeleteButtonTapped),
-                                   tag: indexPath.row)
-        return cell
     }
 }
 
