@@ -40,7 +40,7 @@ final class MovieSubInfoView: UIView {
         return stackView
     }()
     
-    private let moreActorsButton: UIButton = {
+    let moreActorsButton: UIButton = {
         let button = UIButton()
         button.setTitle(ReviewInfo.Phrase.more, for: .normal)
         button.setTitleColor(.systemGray, for: .normal)
@@ -90,12 +90,6 @@ final class MovieSubInfoView: UIView {
         totalAudienceLabel.text = movie.totalAudience.toDecimal() + "명 관람"
         directorNameLabel.text = "감독: " + movie.directorName
         actorsLabel.text =  "출연: " + movie.actors.joined(separator: ", ")
-    }
-    
-    func addTargetMoreButton(with target: UIViewController, selector: Selector) {
-        moreActorsButton.addTarget(target,
-                                   action: selector,
-                                   for: .touchUpInside)
     }
     
     private func setupView() {

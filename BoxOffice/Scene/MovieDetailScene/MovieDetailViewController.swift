@@ -96,7 +96,7 @@ final class MovieDetailViewController: UIViewController {
         
         reviewViewModel.reviews
             .map { reviews in
-                return reviews.count > 3 ? Array(reviews[0..<3]) : reviews
+                return reviews.count > ReviewInfo.reviewLimitCount ? Array(reviews[Int.zero..<ReviewInfo.reviewLimitCount]) : reviews
             }
             .bind(to: reviewTableView.rx.items(cellIdentifier: ReviewTableViewCell.identifier,
                                                cellType: ReviewTableViewCell.self)) { index, item, cell in
@@ -105,6 +105,31 @@ final class MovieDetailViewController: UIViewController {
                                            selector: #selector(self.reviewDeleteButtonTapped),
                                            tag: index)
             }.disposed(by: disposeBag)
+        
+        movieReviewView.moreReviewButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.moreReviewButtonTapped()
+            })
+            .disposed(by: disposeBag)
+        
+        reviewViewModel.reviews.map {
+            $0.count < ReviewInfo.reviewLimitCount
+        }
+        .asDriver(onErrorJustReturn: true)
+        .drive(movieReviewView.moreReviewButton.rx.isHidden)
+        .disposed(by: disposeBag)
+        
+        movieSubInfoView.moreActorsButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.moreActorButtonTapped()
+            })
+            .disposed(by: disposeBag)
+        
+        movieReviewView.writeReviewButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.writeReviewButtonTapped()
+            })
+            .disposed(by: disposeBag)
     }
     
     private func setupTableView() {
@@ -123,7 +148,6 @@ extension MovieDetailViewController {
         addSubView()
         setupTableView()
         setupConstraint()
-        addTagetButton()
         view.backgroundColor = .systemBackground
     }
     
@@ -152,28 +176,19 @@ extension MovieDetailViewController {
 
 //MARK: Button Action
 extension MovieDetailViewController {
-    private func addTagetButton() {
-        movieSubInfoView.addTargetMoreButton(with: self,
-                                             selector: #selector(moreActorButtonTapped))
-        movieReviewView.addTargetWriteButton(with: self,
-                                             selector: #selector(writeReviewButtonTapped))
-        movieReviewView.addTargetMoreButton(with: self,
-                                            selector: #selector(moreReviewButtonTapped))
-    }
-    
-    @objc private func moreActorButtonTapped() {
+    private func moreActorButtonTapped() {
         let actorList = movieDetail.actors
         let actorListViewController = ActorListViewController(actorList: actorList)
         present(actorListViewController, animated: true)
     }
     
-    @objc private func writeReviewButtonTapped() {
+    private func writeReviewButtonTapped() {
         let writeReviewViewController = WriteReviewViewController(movie: movieDetail)
         navigationController?.pushViewController(writeReviewViewController,
                                                  animated: true)
     }
     
-    @objc private func moreReviewButtonTapped() {
+    private func moreReviewButtonTapped() {
         let reviewListViewController = ReviewListViewController(movie: movieDetail,
                                                                  viewModel: reviewViewModel)
         navigationController?.pushViewController(reviewListViewController,

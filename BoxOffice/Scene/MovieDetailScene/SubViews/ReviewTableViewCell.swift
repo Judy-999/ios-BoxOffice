@@ -79,8 +79,7 @@ final class ReviewTableViewCell: UITableViewCell {
         super.init(coder: coder)
         setupView()
     }
-    
-    //TODO: MovieDetail로 뷰 세팅하기
+
     func configure(with review: Review) {
         nickNameLabel.text = review.nickName
         contentLabel.text = review.content
@@ -134,6 +133,5 @@ final class ReviewTableViewCell: UITableViewCell {
             
             photoImageView.widthAnchor.constraint(equalTo: photoImageView.heightAnchor)
         ])
-       
     }
 }

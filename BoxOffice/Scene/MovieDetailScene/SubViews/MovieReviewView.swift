@@ -11,14 +11,14 @@ final class MovieReviewView: UIView {
     private let reviewTitleLabel = MovieLabel(font: .title3, isBold: true)
     private let reviewTableView: UITableView
     
-    private let writeReviewButton: MoviewButton = {
+    let writeReviewButton: MoviewButton = {
         let button = MoviewButton(title: ReviewInfo.Phrase.write)
         button.setImage(ReviewInfo.Image.pencil, for: .normal)
         button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return button
     }()
     
-    private let moreReviewButton: MoviewButton = {
+    let moreReviewButton: MoviewButton = {
         let button = MoviewButton(title: ReviewInfo.Phrase.more)
         button.layer.borderColor = UIColor.systemGray5.cgColor
         button.layer.borderWidth = 2
@@ -48,22 +48,6 @@ final class MovieReviewView: UIView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    func addTargetWriteButton(with target: UIViewController, selector: Selector) {
-        writeReviewButton.addTarget(target,
-                                    action: selector,
-                                    for: .touchUpInside)
-    }
-    
-    func addTargetMoreButton(with target: UIViewController, selector: Selector) {
-        moreReviewButton.addTarget(target,
-                                   action: selector,
-                                   for: .touchUpInside)
-    }
-    
-    func moreButtonState(isEnabled: Bool) {
-        moreReviewButton.isEnabled = isEnabled
     }
     
     private func setupView() {
