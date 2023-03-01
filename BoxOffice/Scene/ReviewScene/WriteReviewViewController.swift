@@ -149,6 +149,13 @@ final class WriteReviewViewController: UIViewController {
                 self?.showAlert(message: error)
             })
             .disposed(by: disposeBag)
+        
+        photoButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                self.present(self.imagePicker, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -204,14 +211,6 @@ extension WriteReviewViewController: UINavigationControllerDelegate, UIImagePick
         imagePicker.delegate = self
         imagePicker.sourceType = .photoLibrary
         imagePicker.allowsEditing = true
-        
-        photoButton.addTarget(self,
-                              action: #selector(photoButtonTapped),
-                              for: .touchUpInside)
-    }
-    
-    @objc private func photoButtonTapped() {
-        present(imagePicker, animated: true)
     }
     
     func imagePickerController(_ picker: UIImagePickerController,
@@ -252,13 +251,7 @@ extension WriteReviewViewController: UITextFieldDelegate {
     }
     
     private func convertToSet(_ text: String) -> Set<String> {
-        var newSet: Set<String> = []
-        
-        text.forEach {
-            newSet.update(with: String($0))
-        }
-        
-        return newSet
+        return Set(text.map { String($0) })
     }
     
     private func hidePasswordText(with textField: UITextField) {
@@ -276,9 +269,7 @@ extension WriteReviewViewController: UITextFieldDelegate {
                    shouldChangeCharactersIn range: NSRange,
                    replacementString string: String) -> Bool {
         if range.length > .zero {
-            (1...range.length).forEach { _ in
-                _ = password.popLast()
-            }
+            password = String(password.dropLast(range.length))
             return true
         }
         
