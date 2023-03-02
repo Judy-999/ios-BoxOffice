@@ -55,4 +55,11 @@ enum ReviewInfo {
         static let trash = UIImage(systemName: "trash")
         static let star = UIImage(systemName: "star.fill")
     }
+    
+    enum Rating {
+        static let halfStarImage = UIImage(systemName: "star.leadinghalf.fill")
+        static let emptyStarImage = UIImage(systemName: "star")
+        static let fillStarImage = UIImage(systemName: "star.fill")
+        static let halfValue: Float = 0.5
+    }
 }

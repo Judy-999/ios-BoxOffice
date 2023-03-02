@@ -36,7 +36,6 @@ final class StarRatingView: UIView {
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.alignment = .fill
-        stackView.spacing = 0
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -58,44 +57,48 @@ final class StarRatingView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        addSliderTarget()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupView()
+        addSliderTarget()
     }
 
     @objc private func sliderStar() {
         let rating = starSlider.value
-        let downedRating = rating.rounded(.down)
-        let halfRating = rating - downedRating
-        let rateValue = Int(downedRating)
+        var ratingValue = rating.rounded(.down)
+        let halfRating = rating - ratingValue
+        let rateIndex = Int(ratingValue)
 
-        fillStar(upto: rateValue)
-        clearStar(upto: rateValue)
+        clearStar()
+        fillStar(upto: rateIndex)
 
-        if halfRating >= 0.5 {
-            starImages[rateValue].image = UIImage(systemName: "star.leadinghalf.fill")
-            ratingLabel.text = "\(rateValue).5"
-        } else {
-            ratingLabel.text = "\(rateValue).0"
-            
-            if rateValue != 5 {
-                starImages[rateValue].image = UIImage(systemName: "star")
-            }
+        if halfRating >= ReviewInfo.Rating.halfValue {
+            starImages[rateIndex].image = ReviewInfo.Rating.halfStarImage
+            ratingValue += ReviewInfo.Rating.halfValue
         }
+        
+        ratingLabel.text = String(format: "%.1f", ratingValue)
     }
 
     private func fillStar(upto index: Int) {
-        for fillIndex in 0..<index {
-            starImages[fillIndex].image = UIImage(systemName: "star.fill")
+        for fillIndex in Int.zero..<index {
+            starImages[fillIndex].image = ReviewInfo.Rating.fillStarImage
         }
     }
 
-    private func clearStar(upto index: Int) {
-        for clearIndex in stride(from: starImages.count - 1, to: index, by: -1) {
-            starImages[clearIndex].image = UIImage(systemName: "star")
+    private func clearStar() {
+        starImages.forEach {
+            $0.image = ReviewInfo.Rating.emptyStarImage
         }
+    }
+    
+    private func addSliderTarget() {
+        starSlider.addTarget(self,
+                             action: #selector(sliderStar),
+                             for: .valueChanged)
     }
 }
 
@@ -104,7 +107,6 @@ extension StarRatingView {
     private func setupView() {
         addSubView()
         setupConstraint()
-        addSliderTarget()
     }
     
     private func addSubView() {
@@ -121,26 +123,21 @@ extension StarRatingView {
     
     private func setupConstraint() {
         NSLayoutConstraint.activate([
-            entireStackView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
-            entireStackView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
-            entireStackView.centerXAnchor.constraint(equalTo: self.safeAreaLayoutGuide.centerXAnchor),
-            entireStackView.widthAnchor.constraint(equalTo: self.safeAreaLayoutGuide.widthAnchor,
+            entireStackView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            entireStackView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            entireStackView.centerXAnchor.constraint(equalTo: safeAreaLayoutGuide.centerXAnchor),
+            entireStackView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor,
                                                    multiplier: 4/5),
             
-            starImages[0].heightAnchor.constraint(equalTo: starImages[0].widthAnchor),
+            starStackView.heightAnchor.constraint(equalTo: starStackView.widthAnchor,
+                                                  multiplier: 1/5),
             ratingLabel.widthAnchor.constraint(equalTo: starStackView.widthAnchor,
                                                multiplier: 1/4),
             
-            starSlider.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            starSlider.centerYAnchor.constraint(equalTo: centerYAnchor),
             starSlider.leadingAnchor.constraint(equalTo: entireStackView.leadingAnchor),
-            starSlider.widthAnchor.constraint(equalTo: self.safeAreaLayoutGuide.widthAnchor,
+            starSlider.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor,
                                               multiplier: 3/5)
         ])
-    }
-    
-    private func addSliderTarget() {
-        starSlider.addTarget(self,
-                             action: #selector(sliderStar),
-                             for: .valueChanged)
     }
 }

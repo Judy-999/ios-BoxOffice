@@ -19,7 +19,7 @@ final class StarImageView: UIImageView {
     }
     
     private func setupView() {
-        self.image = UIImage(systemName: "star")
+        self.image = ReviewInfo.Rating.emptyStarImage
         self.tintColor = .systemYellow
         self.translatesAutoresizingMaskIntoConstraints = false
     }

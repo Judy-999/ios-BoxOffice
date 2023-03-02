@@ -58,7 +58,7 @@ final class MovieMainInfoView: UIView {
     
     private let starView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "star.fill")
+        imageView.image = ReviewInfo.Rating.fillStarImage
         imageView.tintColor = .systemYellow
         imageView.contentMode = .scaleAspectFit
         imageView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
