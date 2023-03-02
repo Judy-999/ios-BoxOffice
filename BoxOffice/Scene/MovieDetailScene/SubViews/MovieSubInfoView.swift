@@ -41,11 +41,9 @@ final class MovieSubInfoView: UIView {
     }()
     
     let moreActorsButton: UIButton = {
-        let button = UIButton()
-        button.setTitle(ReviewInfo.Phrase.more, for: .normal)
+        let button = MoviewButton(title: ReviewInfo.Phrase.more)
         button.setTitleColor(.systemGray, for: .normal)
         button.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     

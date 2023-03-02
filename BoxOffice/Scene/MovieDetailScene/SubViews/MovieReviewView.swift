@@ -11,14 +11,14 @@ final class MovieReviewView: UIView {
     private let reviewTitleLabel = MovieLabel(font: .title3, isBold: true)
     private let reviewTableView: UITableView
     
-    let writeReviewButton: MoviewButton = {
+    let writeReviewButton: UIButton = {
         let button = MoviewButton(title: ReviewInfo.Phrase.write)
         button.setImage(ReviewInfo.Image.pencil, for: .normal)
         button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         return button
     }()
     
-    let moreReviewButton: MoviewButton = {
+    let moreReviewButton: UIButton = {
         let button = MoviewButton(title: ReviewInfo.Phrase.more)
         button.layer.borderColor = UIColor.systemGray5.cgColor
         button.layer.borderWidth = 2

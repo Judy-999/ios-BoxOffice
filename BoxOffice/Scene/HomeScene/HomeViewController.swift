@@ -30,11 +30,8 @@ final class HomeViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
     private let viewModeChangeButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle(" ▼ " + BoxOfficeMode.daily.title, for: .normal)
+        let button = MoviewButton(title: " ▼ " + BoxOfficeMode.daily.title)
         button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .callout)
-        button.setTitleColor(.label, for: .normal)
         button.backgroundColor = .systemGray5
         button.contentHorizontalAlignment = .left
         return button

@@ -15,7 +15,7 @@ final class MovieMainInfoView: UIView {
         return stackView
     }()
     
-    private let openYearStackView: UIStackView = {
+    private let subInfoStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.alignment = .top
@@ -67,31 +67,25 @@ final class MovieMainInfoView: UIView {
     }()
     
     private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .title1)
-        label.font = .boldSystemFont(ofSize: label.font.pointSize)
+        let label = MovieLabel(font: .title1, isBold: true)
         label.numberOfLines = 0
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         label.adjustsFontSizeToFitWidth = true
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let currentRankLabel: UILabel = {
-        let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .largeTitle)
-        label.font = .boldSystemFont(ofSize: label.font.pointSize)
+        let label = MovieLabel(font: .largeTitle, isBold: true)
         label.textColor = .white
         label.backgroundColor = .black
         label.textAlignment = .center
         label.alpha = 0.8
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private let openYearLabel = MovieLabel(font: .body)
     private let genreLabel = MovieLabel(font: .body)
-    private let ratingLabel = MovieLabel(font: .largeTitle)
+    private let ratingLabel = MovieLabel(font: .title3)
     private let rankChangeBandgeLabel = RankBadgeLabel()
     private let newEntryBadgeLabel = RankBadgeLabel()
     
@@ -127,7 +121,6 @@ final class MovieMainInfoView: UIView {
     }
     
     private func setupRankChangeLabel(with rankChange: String) {
-        // TODO: 애초에 Int로 받아와도 되지 않나? 아닌가
         if let change = Int(rankChange), change != .zero {
             rankChangeBandgeLabel.setupRank(change)
         } else {
@@ -145,15 +138,15 @@ final class MovieMainInfoView: UIView {
         rankStackView.addArrangedSubview(rankChangeBandgeLabel)
         rankStackView.addArrangedSubview(newEntryBadgeLabel)
         
-        openYearStackView.addArrangedSubview(openYearLabel)
-        openYearStackView.addArrangedSubview(genreLabel)
+        subInfoStackView.addArrangedSubview(openYearLabel)
+        subInfoStackView.addArrangedSubview(genreLabel)
         
         ratingStackView.addArrangedSubview(starView)
         ratingStackView.addArrangedSubview(ratingLabel)
         
         infoStackView.addArrangedSubview(titleLabel)
+        infoStackView.addArrangedSubview(subInfoStackView)
         infoStackView.addArrangedSubview(rankStackView)
-        infoStackView.addArrangedSubview(openYearStackView)
         infoStackView.addArrangedSubview(ratingStackView)
         
         entireStackView.addArrangedSubview(posterView)
