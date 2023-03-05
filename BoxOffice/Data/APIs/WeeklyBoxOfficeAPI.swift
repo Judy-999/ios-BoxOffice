@@ -14,7 +14,7 @@ enum WeekOption: String {
 }
 
 struct WeeklyBoxOfficeListAPI: API {
-    typealias ResponseType = WeeklyBoxOfficeListResponseDTO
+    typealias ResponseType = WeeklyBoxOfficeDTO
     
     var configuration: MovieRequest
     
@@ -32,8 +32,3 @@ struct WeeklyBoxOfficeListAPI: API {
         )
     }
 }
-
-struct WeeklyBoxOfficeListResponseDTO: Decodable {
-    let boxOfficeResult: BoxOfficeResult
-}
-

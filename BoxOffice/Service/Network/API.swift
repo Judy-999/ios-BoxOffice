@@ -14,7 +14,7 @@ protocol API {
 }
 
 extension API {
-    func execute(using client: APIProvider = APIProvider.shared) -> Observable<ResponseType> {
+    func execute(using client: APIService = APIService.shared) -> Observable<ResponseType> {
         guard let urlRequest = configuration.urlRequest else {
             return Observable<ResponseType>.empty()
         }

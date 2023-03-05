@@ -76,7 +76,7 @@ struct MovieAPIUseCase {
         return movieDatas.asObservable()
     }
     
-    private func fetchMovieDetailInfo(with movieCode: String) -> Observable<MovieInfoDTO> {
+    private func fetchMovieDetailInfo(with movieCode: String) -> Observable<MovieInfo> {
         let searchMovieInfoAPI = MovieInfoAPI(movieCode: movieCode)
         
         return searchMovieInfoAPI.execute()
@@ -96,7 +96,7 @@ struct MovieAPIUseCase {
 
 extension MovieAPIUseCase {
     private func toMovie(with boxOffice: BoxOfficeDTO,
-                         _ movieInfo: MovieInfoDTO,
+                         _ movieInfo: MovieInfo,
                          _ image: UIImage?) -> MovieData {
         return MovieData(
             uuid: UUID(),

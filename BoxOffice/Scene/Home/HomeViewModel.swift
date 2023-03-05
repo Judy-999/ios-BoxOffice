@@ -48,15 +48,17 @@ final class HomeViewModel: HomeViewModelType {
         
         isLoading.accept(true)
         
-        allWeek.subscribe(onNext: { [weak self] in
-            self?.allWeekMovieCellDatas.accept($0)
-        })
-        .disposed(by: disposeBag)
+        allWeek
+            .subscribe(onNext: { [weak self] in
+                self?.allWeekMovieCellDatas.accept($0)
+            })
+            .disposed(by: disposeBag)
         
-        weekend.subscribe(onNext: { [weak self] in
-            self?.weekEndMovieCellDatas.accept($0)
-        })
-        .disposed(by: disposeBag)
+        weekend
+            .subscribe(onNext: { [weak self] in
+                self?.weekEndMovieCellDatas.accept($0)
+            })
+            .disposed(by: disposeBag)
         
         Observable.zip(allWeek, weekend)
         .subscribe(onNext: { _, _ in

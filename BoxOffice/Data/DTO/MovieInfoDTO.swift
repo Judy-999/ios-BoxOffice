@@ -1,37 +1,19 @@
 //
-//  SearchMovieInfoAPI.swift
+//  MovieInfoDTO.swift
 //  BoxOffice
 //
-//  Created by 이원빈 on 2023/01/02.
+//  Created by 김주영 on 2023/03/05.
 //
 
-import Foundation
-
-struct MovieInfoAPI: API {
-    typealias ResponseType = MovieInfoResponseDTO
-    
-    var configuration: MovieRequest
-    
-    init(movieCode: String) {
-        self.configuration = MovieRequest(
-            baseURL: .kobis,
-            path: .movieInfo,
-            httpMethod: .get,
-            query: ["key": Bundle.main.kobisApiKey,
-                    "movieCd": movieCode]
-        )
-    }
-}
-
-struct MovieInfoResponseDTO: Decodable {
+struct MovieInfoDTO: Decodable {
     let movieInfoResult: MovieInfoResult
 }
 
 struct MovieInfoResult: Decodable {
-    let movieInfo: MovieInfoDTO
+    let movieInfo: MovieInfo
 }
 
-struct MovieInfoDTO: Decodable {
+struct MovieInfo: Decodable {
     let movieCd: String
     let movieNm: String
     let movieNmEn: String

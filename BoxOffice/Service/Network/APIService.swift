@@ -9,8 +9,8 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-final class APIProvider {
-    static let shared = APIProvider(sesseion: URLSession.shared)
+final class APIService {
+    static let shared = APIService(sesseion: URLSession.shared)
     private let session: URLSession
     
     private init(sesseion: URLSession) {
