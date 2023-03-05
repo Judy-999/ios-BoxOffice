@@ -83,6 +83,12 @@ final class MovieMainInfoView: UIView {
         return label
     }()
     
+    private let separatorLabel: UILabel = {
+        let label = MovieLabel(font: .body, isBold: true)
+        label.text = " • "
+        return label
+    }()
+    
     private let openYearLabel = MovieLabel(font: .body)
     private let genreLabel = MovieLabel(font: .body)
     private let ratingLabel = MovieLabel(font: .title3)
@@ -111,12 +117,12 @@ final class MovieMainInfoView: UIView {
     
     func configure(with movie: MovieData, rating: String) {
         posterView.image = movie.poster
-        ratingLabel.text = rating == "nan" ? "정보 없음" : rating
+        ratingLabel.text = InfoForm.rating(rating).description
         titleLabel.text = movie.title
         currentRankLabel.text = movie.currentRank
         setupRankChangeLabel(with: movie.rankChange)
         newEntryBadgeLabel.setupEntryInfo(with: movie.isNewEntry)
-        openYearLabel.text = movie.openYear + " • "
+        openYearLabel.text = movie.openYear
         genreLabel.text = movie.genreName
     }
     
@@ -139,6 +145,7 @@ final class MovieMainInfoView: UIView {
         rankStackView.addArrangedSubview(newEntryBadgeLabel)
         
         subInfoStackView.addArrangedSubview(openYearLabel)
+        subInfoStackView.addArrangedSubview(separatorLabel)
         subInfoStackView.addArrangedSubview(genreLabel)
         
         ratingStackView.addArrangedSubview(starView)

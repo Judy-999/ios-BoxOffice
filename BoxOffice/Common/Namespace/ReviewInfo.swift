@@ -1,19 +1,11 @@
 //
-//  Namespace.swift
+//  ReviewInfo.swift
 //  BoxOffice
 //
-//  Created by 김주영 on 2023/02/27.
+//  Created by 김주영 on 2023/03/02.
 //
 
 import UIKit
-
-enum BoxOfficeImage {
-    static let posterPlacehorder = UIImage(systemName: "nosign")
-    static let photoPlacehorder = UIImage(systemName: "photo.on.rectangle.angled")
-    static let calendar = UIImage(systemName: "calendar")
-    static let checkMark = UIImage(systemName: "checkmark")
-    static let share = UIImage(systemName: "square.and.arrow.up")
-}
 
 enum ReviewInfo {
     static let reviewLimitCount = 3

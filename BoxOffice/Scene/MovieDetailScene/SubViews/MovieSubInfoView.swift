@@ -84,10 +84,9 @@ final class MovieSubInfoView: UIView {
         }
         
         productionYearLabel.text = movie.productionYear
-        showTimeLabel.text = movie.showTime + "분"
-        totalAudienceLabel.text = movie.totalAudience.toDecimal() + "명 관람"
-        directorNameLabel.text = "감독: " + movie.directorName
-        actorsLabel.text =  "출연: " + movie.actors.joined(separator: ", ")
+        showTimeLabel.text = InfoForm.showTime(movie.showTime).description
+        totalAudienceLabel.text = InfoForm.audience(movie.totalAudience.toDecimal()).description
+        actorsLabel.text = InfoForm.actors(movie.actors).description
     }
     
     private func setupView() {
@@ -131,43 +130,5 @@ final class MovieSubInfoView: UIView {
             
             entireStackView.centerYAnchor.constraint(equalTo: safeAreaLayoutGuide.centerYAnchor)
         ])
-    }
-}
-
-enum AgeLimit: String {
-    case all = "전체관람가"
-    case twelveOver = "12세이상관람가"
-    case fifteenOver = "15세이상관람가"
-    case teenagersNotAllowed = "청소년관람불가"
-    case fullLimit = "제한상영가"
-    
-    var age: String {
-        switch self {
-        case .all:
-            return " ALL "
-        case .twelveOver:
-            return " 12 "
-        case .fifteenOver:
-            return " 15 "
-        case .teenagersNotAllowed:
-            return " 18 "
-        case .fullLimit:
-            return " X "
-        }
-    }
-    
-    var color: UIColor {
-        switch self {
-        case .all:
-            return .systemGreen
-        case .twelveOver:
-            return .systemYellow
-        case .fifteenOver:
-            return .systemOrange
-        case .teenagersNotAllowed:
-            return .systemRed
-        case .fullLimit:
-            return .black
-        }
     }
 }

@@ -114,7 +114,7 @@ final class GridCell: UICollectionViewCell {
     }
     
     private func setTotalAudiencesCountLabel(with totalAudience: String) {
-        totalAudiencesCountLabel.text = totalAudience.toDecimal() + "명 관람"
+        totalAudiencesCountLabel.text = InfoForm.audience(totalAudience.toDecimal()).description
     }
     
     private func setPosterImageView(with image: UIImage?) {
