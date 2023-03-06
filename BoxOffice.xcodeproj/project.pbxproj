@@ -229,6 +229,7 @@
 		2011FA3329B4DA2D0031A50A /* SubViews */ = {
 			isa = PBXGroup;
 			children = (
+				200597972966B690002AB7EC /* ReviewTableViewCell.swift */,
 				20F38AF92965112200415749 /* StarRating */,
 			);
 			path = SubViews;
@@ -249,7 +250,6 @@
 				20F38B0C2965CCAE00415749 /* MovieMainInfoView.swift */,
 				201825A929664B8F00ADB79A /* MovieSubInfoView.swift */,
 				201825AB29664D8D00ADB79A /* MovieReviewView.swift */,
-				200597972966B690002AB7EC /* ReviewTableViewCell.swift */,
 			);
 			path = SubViews;
 			sourceTree = "<group>";
