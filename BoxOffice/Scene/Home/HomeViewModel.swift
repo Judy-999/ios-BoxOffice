@@ -18,22 +18,32 @@ protocol HomeViewModelOutput {
     var dailyMovieCellDatas: BehaviorRelay<[MovieData]> { get }
     var allWeekMovieCellDatas: BehaviorRelay<[MovieData]> { get }
     var weekEndMovieCellDatas: BehaviorRelay<[MovieData]> { get }
-    var isLoading: PublishRelay<Bool> { get set }
+    var isLoading: BehaviorRelay<Bool> { get set }
 }
 
 protocol HomeViewModelType: HomeViewModelInput, HomeViewModelOutput {}
 
 final class HomeViewModel: HomeViewModelType {
-    private let movieAPIUseCase = MovieAPIUseCase()
+    private let movieRepository: BoxOfficeRepository
+    private let posterRepository: PosterRepository
     
     var dailyMovieCellDatas = BehaviorRelay<[MovieData]>(value: [])
     var allWeekMovieCellDatas = BehaviorRelay<[MovieData]>(value:[])
     var weekEndMovieCellDatas = BehaviorRelay<[MovieData]>(value:[])
-    var isLoading = PublishRelay<Bool>()
+    var isLoading = BehaviorRelay<Bool>(value: true)
+    
+    init(movieRepository: BoxOfficeRepository,
+         posterRepository: PosterRepository) {
+        self.movieRepository = movieRepository
+        self.posterRepository = posterRepository
+    }
     
     func requestDailyData(with date: String, disposeBag: DisposeBag) {
         isLoading.accept(true)
-        movieAPIUseCase.requestDailyData(with: date)
+        
+        let dailyUseCase = DailyBoxOfficeUseCase(movieRepository,
+                                                 posterRepository)
+        dailyUseCase.execute(date: date)
             .subscribe(onNext: { [weak self] in
                 self?.dailyMovieCellDatas.accept($0)},
                        onCompleted: { [weak self] in
@@ -43,11 +53,15 @@ final class HomeViewModel: HomeViewModelType {
     }
     
     func requestWeeklyDate(with date: String, disposeBag: DisposeBag) {
-        let allWeek = movieAPIUseCase.requestAllWeekData(with: date)
-        let weekend = movieAPIUseCase.requestWeekEndData(with: date)
-        
         isLoading.accept(true)
         
+        let allWeek = WeeklyBoxOfficeUseCase(movieRepository,
+                                             posterRepository)
+            .execute(date: date)
+        let weekend = WeekendBoxOfficeUseCase(movieRepository,
+                                              posterRepository)
+            .execute(date: date)
+
         allWeek
             .subscribe(onNext: { [weak self] in
                 self?.allWeekMovieCellDatas.accept($0)

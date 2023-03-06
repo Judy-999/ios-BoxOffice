@@ -15,7 +15,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-        let homeViewModel = HomeViewModel()
+        let homeViewModel = HomeViewModel(movieRepository: BoxOfficeRepository(),
+                                          posterRepository: PosterRepository(imageCacheManager: URLCacheManager()))
         let mainviewController = HomeViewController(homeViewModel)
         let navigationController = UINavigationController(rootViewController: mainviewController)
         
