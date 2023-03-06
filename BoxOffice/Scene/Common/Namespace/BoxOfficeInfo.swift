@@ -13,6 +13,7 @@ enum InfoForm {
     case director(String)
     case actors([String])
     case rating(String)
+    case openDate(String)
     
     var description: String {
         switch self {
@@ -26,6 +27,8 @@ enum InfoForm {
             return "출연: " + actors.joined(separator: ", ")
         case .rating(let rating):
             return rating == "nan" ? "정보 없음" : rating
+        case .openDate(let date):
+            return date + " 개봉"
         }
     }
 }

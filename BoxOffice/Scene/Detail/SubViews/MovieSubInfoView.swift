@@ -86,6 +86,7 @@ final class MovieSubInfoView: UIView {
         productionYearLabel.text = movie.productionYear
         showTimeLabel.text = InfoForm.showTime(movie.showTime).description
         totalAudienceLabel.text = InfoForm.audience(movie.totalAudience.toDecimal()).description
+        directorNameLabel.text = InfoForm.director(movie.directorName).description
         actorsLabel.text = InfoForm.actors(movie.actors).description
     }
     

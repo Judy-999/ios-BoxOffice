@@ -8,18 +8,6 @@
 import UIKit
 
 final class GridCell: UICollectionViewCell {
-    private let posterImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFill
-        imageView.tintColor = .systemGray3
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.systemGray3.cgColor
-        imageView.layer.cornerRadius = 10
-        imageView.clipsToBounds = true
-        return imageView
-    }()
-    
     private let mainStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -47,36 +35,30 @@ final class GridCell: UICollectionViewCell {
         return stackView
     }()
     
-    private let totalAudiencesCountLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+    private let totalAudienceLabel: UILabel = {
+        let label = MovieLabel(font: .footnote)
         label.textColor = .systemGray
-        label.font = UIFont.preferredFont(forTextStyle: .footnote)
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         return label
     }()
     
     private let openDateLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+        let label = MovieLabel(font: .footnote)
         label.textColor = .systemGray
-        label.font = UIFont.preferredFont(forTextStyle: .footnote)
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         return label
     }()
 
     private let currentRankLabel: UILabel = {
-        let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .title2)
-        label.font = .boldSystemFont(ofSize: label.font.pointSize)
+        let label = MovieLabel(font: .title2, isBold: true)
         label.textColor = .white
         label.backgroundColor = .black
         label.textAlignment = .center
         label.alpha = 0.8
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
+    
+    private let posterImageView: UIImageView = PosterImageView()
     private let titleLabel = MovieLabel(font: .title3)
     private let rankChangeBandgeLabel = RankBadgeLabel()
     private let newEntryBadgeLabel = RankBadgeLabel()
@@ -94,15 +76,11 @@ final class GridCell: UICollectionViewCell {
     func setup(with movie: MovieData) {
         titleLabel.text = movie.title
         currentRankLabel.text = movie.currentRank
-        setOpenDateLabel(with: movie.openDate)
+        openDateLabel.text = InfoForm.openDate(movie.openDate).description
         setupRankChangeLabel(with: movie.rankChange)
-        setTotalAudiencesCountLabel(with: movie.totalAudience)
+        totalAudienceLabel.text = InfoForm.audience(movie.totalAudience.toDecimal()).description
         newEntryBadgeLabel.setupEntryInfo(with: movie.isNewEntry)
-        setPosterImageView(with: movie.poster)
-    }
-    
-    private func setOpenDateLabel(with openDate: String) {
-        openDateLabel.text = openDate.toDateFormat() + " 개봉"
+        posterImageView.image = movie.poster
     }
     
     private func setupRankChangeLabel(with rankChange: String) {
@@ -113,25 +91,10 @@ final class GridCell: UICollectionViewCell {
         }
     }
     
-    private func setTotalAudiencesCountLabel(with totalAudience: String) {
-        totalAudiencesCountLabel.text = InfoForm.audience(totalAudience.toDecimal()).description
-    }
-    
-    private func setPosterImageView(with image: UIImage?) {
-        if let image = image {
-            posterImageView.image = image
-        } else {
-            let image = BoxOfficeImage.posterPlacehorder
-            posterImageView.backgroundColor = .systemGray6
-            posterImageView.image = image
-        }
-    }
-    
     override func prepareForReuse() {
         super.prepareForReuse()
         rankChangeBandgeLabel.isHidden = false
         posterImageView.image = BoxOfficeImage.posterPlacehorder
-        posterImageView.backgroundColor = nil
     }
 }
 
@@ -143,7 +106,7 @@ private extension GridCell {
         
         infoStackView.addArrangedSubview(titleLabel)
         infoStackView.addArrangedSubview(badgeStackView)
-        infoStackView.addArrangedSubview(totalAudiencesCountLabel)
+        infoStackView.addArrangedSubview(totalAudienceLabel)
         infoStackView.addArrangedSubview(openDateLabel)
         
         mainStackView.addArrangedSubview(posterImageView)

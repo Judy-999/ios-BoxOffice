@@ -8,15 +8,6 @@
 import UIKit
 
 final class ListCell: UICollectionViewCell {
-    private let posterImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .systemGray3
-        imageView.clipsToBounds = true
-        return imageView
-    }()
-    
     private let mainStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -48,25 +39,25 @@ final class ListCell: UICollectionViewCell {
         stackView.axis = .horizontal
         stackView.alignment = .top
         stackView.spacing = 8
+        stackView.setContentHuggingPriority(.defaultLow, for: .vertical)
         return stackView
     }()
     
-    private let totalAudiencesCountLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+    private let totalAudienceLabel: UILabel = {
+        let label = MovieLabel(font: .callout)
         label.textColor = .systemGray
-        label.font = UIFont.preferredFont(forTextStyle: .callout)
+        label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         return label
     }()
     
     private let openDateLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+        let label = MovieLabel(font: .callout)
         label.textColor = .systemGray
-        label.font = UIFont.preferredFont(forTextStyle: .callout)
+        label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         return label
     }()
     
+    private let posterImageView: UIImageView = PosterImageView()
     private let rankLabel = MovieLabel(font: .title1, isBold: true)
     private let titleLabel = MovieLabel(font: .title2)
     private let rankChangeBandgeLabel = RankBadgeLabel()
@@ -88,16 +79,11 @@ final class ListCell: UICollectionViewCell {
     func setup(with movie: MovieData) {
         titleLabel.text = movie.title
         rankLabel.text = movie.currentRank
-
-        setOpenDateLabel(with: movie.openDate)
+        openDateLabel.text = InfoForm.openDate(movie.openDate).description
         setupRankChangeLabel(with: movie.rankChange)
-        setTotalAudiencesCountLabel(with: movie.totalAudience)
+        totalAudienceLabel.text = InfoForm.audience(movie.totalAudience.toDecimal()).description
         newEntryBadgeLabel.setupEntryInfo(with: movie.isNewEntry)
-        setPosterImageView(with: movie.poster)
-    }
-    
-    private func setOpenDateLabel(with openDate: String) {
-        openDateLabel.text = openDate.toDateFormat() + " 개봉"
+        posterImageView.image = movie.poster
     }
     
     private func setupRankChangeLabel(with rankChange: String) {
@@ -105,20 +91,6 @@ final class ListCell: UICollectionViewCell {
             rankChangeBandgeLabel.setupRank(change)
         } else {
             rankChangeBandgeLabel.isHidden = true
-        }
-    }
-    
-    private func setTotalAudiencesCountLabel(with totalAudience: String) {
-        totalAudiencesCountLabel.text = totalAudience.toDecimal() + "명 관람"
-    }
-    
-    private func setPosterImageView(with image: UIImage?) {
-        if let image = image {
-            posterImageView.image = image
-        } else {
-            let image = BoxOfficeImage.posterPlacehorder
-            posterImageView.backgroundColor = .systemGray6
-            posterImageView.image = image
         }
     }
 
@@ -137,7 +109,7 @@ private extension ListCell {
         
         infoStackView.addArrangedSubview(titleLabel)
         infoStackView.addArrangedSubview(badgeStackView)
-        infoStackView.addArrangedSubview(totalAudiencesCountLabel)
+        infoStackView.addArrangedSubview(totalAudienceLabel)
         infoStackView.addArrangedSubview(openDateLabel)
         
         rankStackView.addArrangedSubview(rankLabel)
@@ -151,9 +123,6 @@ private extension ListCell {
     
     func setupLayout() {
         titleLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        badgeStackView.setContentHuggingPriority(.defaultLow, for: .vertical)
-        totalAudiencesCountLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
-        openDateLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
                 
         NSLayoutConstraint.activate([
             mainStackView.topAnchor.constraint(equalTo: topAnchor,

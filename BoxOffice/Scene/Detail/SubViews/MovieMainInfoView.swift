@@ -49,13 +49,6 @@ final class MovieMainInfoView: UIView {
         return stackView
     }()
     
-    private let posterView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.backgroundColor = .systemGray6
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
     private let starView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = ReviewInfo.Rating.fillStarImage
@@ -89,6 +82,7 @@ final class MovieMainInfoView: UIView {
         return label
     }()
     
+    private let posterView: UIImageView = PosterImageView()
     private let openYearLabel = MovieLabel(font: .body)
     private let genreLabel = MovieLabel(font: .body)
     private let ratingLabel = MovieLabel(font: .title3)
