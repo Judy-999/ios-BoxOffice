@@ -65,7 +65,6 @@
 		AF6C3A422962D5C80074574D /* MovieRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6C3A412962D5C80074574D /* MovieRequest.swift */; };
 		AF6C3A442962D5E00074574D /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6C3A432962D5E00074574D /* APIError.swift */; };
 		AF6C3A462962D5E70074574D /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6C3A452962D5E70074574D /* API.swift */; };
-		AF6C3A482962D6090074574D /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6C3A472962D6090074574D /* APIService.swift */; };
 		AF6C3A4B2962D7210074574D /* DailyBoxOfficeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6C3A4A2962D7210074574D /* DailyBoxOfficeAPI.swift */; };
 		AF6C3A4D2962D74E0074574D /* WeeklyBoxOfficeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6C3A4C2962D74E0074574D /* WeeklyBoxOfficeAPI.swift */; };
 		AF6C3A4F2962D79D0074574D /* MovieInfoAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6C3A4E2962D79D0074574D /* MovieInfoAPI.swift */; };
@@ -77,7 +76,7 @@
 		AF85E0A92965156A00A22732 /* ModeSelectPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF85E0A82965156A00A22732 /* ModeSelectPresentationController.swift */; };
 		AF85E0AB29651C0000A22732 /* ModeSelectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF85E0AA29651C0000A22732 /* ModeSelectCell.swift */; };
 		AF85E0AD29653D7400A22732 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF85E0AC29653D7400A22732 /* HomeViewModel.swift */; };
-		AF85E0B12965509D00A22732 /* ImageCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF85E0B02965509D00A22732 /* ImageCacheManager.swift */; };
+		AF85E0B12965509D00A22732 /* URLCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF85E0B02965509D00A22732 /* URLCacheManager.swift */; };
 		AF85E0B329656BBA00A22732 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF85E0B229656BBA00A22732 /* CalendarViewController.swift */; };
 		AF85E0B5296571A300A22732 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF85E0B4296571A300A22732 /* Date+Extension.swift */; };
 		AFB6BB712963C4AA00386D14 /* ListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB6BB702963C4AA00386D14 /* ListCell.swift */; };
@@ -140,7 +139,6 @@
 		AF6C3A412962D5C80074574D /* MovieRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieRequest.swift; sourceTree = "<group>"; };
 		AF6C3A432962D5E00074574D /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		AF6C3A452962D5E70074574D /* API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
-		AF6C3A472962D6090074574D /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		AF6C3A4A2962D7210074574D /* DailyBoxOfficeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyBoxOfficeAPI.swift; sourceTree = "<group>"; };
 		AF6C3A4C2962D74E0074574D /* WeeklyBoxOfficeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyBoxOfficeAPI.swift; sourceTree = "<group>"; };
 		AF6C3A4E2962D79D0074574D /* MovieInfoAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieInfoAPI.swift; sourceTree = "<group>"; };
@@ -152,7 +150,7 @@
 		AF85E0A82965156A00A22732 /* ModeSelectPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeSelectPresentationController.swift; sourceTree = "<group>"; };
 		AF85E0AA29651C0000A22732 /* ModeSelectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeSelectCell.swift; sourceTree = "<group>"; };
 		AF85E0AC29653D7400A22732 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
-		AF85E0B02965509D00A22732 /* ImageCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCacheManager.swift; sourceTree = "<group>"; };
+		AF85E0B02965509D00A22732 /* URLCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCacheManager.swift; sourceTree = "<group>"; };
 		AF85E0B229656BBA00A22732 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		AF85E0B4296571A300A22732 /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		AFB6BB702963C4AA00386D14 /* ListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCell.swift; sourceTree = "<group>"; };
@@ -270,19 +268,19 @@
 		201C82812966FC180060054B /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				201C82822966FC370060054B /* ImageCache */,
+				201C82822966FC370060054B /* URLCache */,
 				AF6C3A402962D5B50074574D /* Network */,
 				2073EB18296317BF00216565 /* Firebase */,
 			);
 			path = Service;
 			sourceTree = "<group>";
 		};
-		201C82822966FC370060054B /* ImageCache */ = {
+		201C82822966FC370060054B /* URLCache */ = {
 			isa = PBXGroup;
 			children = (
-				AF85E0B02965509D00A22732 /* ImageCacheManager.swift */,
+				AF85E0B02965509D00A22732 /* URLCacheManager.swift */,
 			);
-			path = ImageCache;
+			path = URLCache;
 			sourceTree = "<group>";
 		};
 		201C82842966FCF90060054B /* Extension */ = {
@@ -527,7 +525,6 @@
 				AF6C3A412962D5C80074574D /* MovieRequest.swift */,
 				AF6C3A432962D5E00074574D /* APIError.swift */,
 				AF6C3A452962D5E70074574D /* API.swift */,
-				AF6C3A472962D6090074574D /* APIService.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -656,7 +653,6 @@
 				AF85E0B329656BBA00A22732 /* CalendarViewController.swift in Sources */,
 				20B3FC6A29B07056009C7C36 /* ReviewInfo.swift in Sources */,
 				20C7D43C29642F0400D87350 /* StarRatingView.swift in Sources */,
-				AF6C3A482962D6090074574D /* APIService.swift in Sources */,
 				AF12A4752965963A008C484B /* CalendarTransitioningDelegate.swift in Sources */,
 				2011FA2D29B4D49C0031A50A /* MovieInfoDTO.swift in Sources */,
 				AFB6BB73296413B300386D14 /* HomeCollectionView.swift in Sources */,
@@ -686,7 +682,7 @@
 				200597982966B690002AB7EC /* ReviewTableViewCell.swift in Sources */,
 				AF85E0AB29651C0000A22732 /* ModeSelectCell.swift in Sources */,
 				AF22D9EC29682F130059075F /* ActorListViewController.swift in Sources */,
-				AF85E0B12965509D00A22732 /* ImageCacheManager.swift in Sources */,
+				AF85E0B12965509D00A22732 /* URLCacheManager.swift in Sources */,
 				AF6C3A4F2962D79D0074574D /* MovieInfoAPI.swift in Sources */,
 				20F8D473296816DF00FA77BA /* ReviewListViewController.swift in Sources */,
 				AF22D9F0296836170059075F /* ActorListTransitioningDelegate.swift in Sources */,

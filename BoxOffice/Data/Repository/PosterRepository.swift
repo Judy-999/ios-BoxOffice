@@ -11,7 +11,7 @@ import RxSwift
 struct PosterRepository {
     private let imageCacheManager: URLCacheManager
     
-    init(imageCacheManager: URLCacheManager) {
+    init(imageCacheManager: URLCacheManager = .shared) {
         self.imageCacheManager = imageCacheManager
     }
     

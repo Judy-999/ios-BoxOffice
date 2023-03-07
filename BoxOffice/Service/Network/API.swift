@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 protocol API {
     associatedtype ResponseType: Decodable
@@ -14,15 +15,27 @@ protocol API {
 }
 
 extension API {
-    func execute(using client: APIService = APIService.shared) -> Observable<ResponseType> {
+    func execute(using cache: URLCacheManager = URLCacheManager.shared) -> Observable<ResponseType> {
         guard let urlRequest = configuration.urlRequest else {
             return Observable<ResponseType>.empty()
         }
         
-        return client.requestData(with: urlRequest)
-            .map { data in
-                let result = try JSONDecoder().decode(ResponseType.self, from: data)
-                return result
+        if let data = cache.getDataFromCache(with: urlRequest) {
+            return Observable.just(data)
+                .map {
+                    return try JSONDecoder().decode(ResponseType.self, from: $0)
+                }
+        }
+        
+        return URLSession.shared.rx.response(request: urlRequest)
+            .filter { response, data in
+                200..<400 ~= response.statusCode
+            }
+            .do(onNext: { response, data in
+                cache.saveDataInCache(with: urlRequest, response, data)
+            })
+            .map { _, data in
+                return try JSONDecoder().decode(ResponseType.self, from: data)
             }
     }
 }
