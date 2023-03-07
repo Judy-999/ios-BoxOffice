@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CalendarViewControllerDelegate: AnyObject {
-    func searchButtonTapped(date: Date) async throws
+    func searchButtonTapped(date: Date)
 }
 
 final class CalendarViewController: UIViewController {
@@ -88,9 +88,7 @@ final class CalendarViewController: UIViewController {
     }
     
     @objc private func searchButtonTapped() {
-        Task {
-            try await delegate?.searchButtonTapped(date: datePicker.date)
-        }
+        delegate?.searchButtonTapped(date: datePicker.date)
         
         self.dismiss(animated: true)
     }

@@ -8,18 +8,16 @@
 import UIKit
 
 final class ModeSelectCell: UITableViewCell {
-    private let boxOfficeLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
     private let checkImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = BoxOfficeImage.checkMark
         return imageView
     }()
+    
+    private let boxOfficeLabel: UILabel = MovieLabel(font: .body)
+    
+
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
