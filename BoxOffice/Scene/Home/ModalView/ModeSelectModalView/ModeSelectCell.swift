@@ -16,9 +16,7 @@ final class ModeSelectCell: UITableViewCell {
     }()
     
     private let boxOfficeLabel: UILabel = MovieLabel(font: .body)
-    
 
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         addSubviews()

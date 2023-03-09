@@ -22,12 +22,9 @@ final class ActorListPresentationController: UIPresentationController {
     }()
     
     override var frameOfPresentedViewInContainerView: CGRect {
-        let size = CGSize(width: viewWidth,
-                          height: viewHeight)
-        let origin = CGPoint(
-            x: UIScreen.main.bounds.midX-viewWidth / 2,
-            y: UIScreen.main.bounds.midY-viewHeight / 2
-        )
+        let size = CGSize(width: viewWidth, height: viewHeight)
+        let origin = CGPoint(x: UIScreen.main.bounds.midX - viewWidth / 2,
+                             y: UIScreen.main.bounds.midY - viewHeight / 2)
         return CGRect(origin: origin, size: size)
     }
     

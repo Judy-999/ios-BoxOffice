@@ -61,7 +61,13 @@ final class HomeViewModel: HomeViewModelType {
         let weekend = WeekendBoxOfficeUseCase(movieRepository,
                                               posterRepository)
             .execute(date: date)
-
+        
+        Observable.zip(allWeek, weekend)
+        .subscribe(onNext: { _, _ in
+            self.isLoading.accept(false)
+        })
+        .disposed(by: disposeBag)
+        
         allWeek
             .subscribe(onNext: { [weak self] in
                 self?.allWeekMovieCellDatas.accept($0)
@@ -74,10 +80,6 @@ final class HomeViewModel: HomeViewModelType {
             })
             .disposed(by: disposeBag)
         
-        Observable.zip(allWeek, weekend)
-        .subscribe(onNext: { _, _ in
-            self.isLoading.accept(false)
-        })
-        .disposed(by: disposeBag)
+       
     }
 }

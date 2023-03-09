@@ -290,6 +290,7 @@
 				AF6C3A542962EA0B0074574D /* Bundle+Extension.swift */,
 				AF85E0B4296571A300A22732 /* Date+Extension.swift */,
 				203F2A15299F1D7F00500EF4 /* String+Extension.swift */,
+				20F8D4762968396900FA77BA /* UIViewController+.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -436,7 +437,6 @@
 			isa = PBXGroup;
 			children = (
 				20F38B0A2965C31400415749 /* MovieDetailViewController.swift */,
-				20F8D4762968396900FA77BA /* UIViewController+.swift */,
 				AF22D9F1296839EB0059075F /* ActorListModalView */,
 				201C827A2966F4A10060054B /* SubViews */,
 			);
