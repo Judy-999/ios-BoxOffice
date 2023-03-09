@@ -35,6 +35,7 @@
 		209B381C29B5C59300F8E289 /* DailyBoxOfficeUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 209B381B29B5C59300F8E289 /* DailyBoxOfficeUseCase.swift */; };
 		209B384729B632A300F8E289 /* PosterImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 209B384629B632A300F8E289 /* PosterImageView.swift */; };
 		209E478029AC810E00D8B36D /* BoxOfficeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 209E477F29AC810E00D8B36D /* BoxOfficeInfo.swift */; };
+		20B170B029B96A8B00491901 /* URLSession+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B170AF29B96A8B00491901 /* URLSession+Rx.swift */; };
 		20B3FC6829B07033009C7C36 /* AgeLimit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B3FC6729B07033009C7C36 /* AgeLimit.swift */; };
 		20B3FC6A29B07056009C7C36 /* ReviewInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B3FC6929B07056009C7C36 /* ReviewInfo.swift */; };
 		20BB8C192963B40300801668 /* ReviewFirebaseUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20BB8C182963B40300801668 /* ReviewFirebaseUseCase.swift */; };
@@ -107,6 +108,7 @@
 		209B381B29B5C59300F8E289 /* DailyBoxOfficeUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyBoxOfficeUseCase.swift; sourceTree = "<group>"; };
 		209B384629B632A300F8E289 /* PosterImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterImageView.swift; sourceTree = "<group>"; };
 		209E477F29AC810E00D8B36D /* BoxOfficeInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxOfficeInfo.swift; sourceTree = "<group>"; };
+		20B170AF29B96A8B00491901 /* URLSession+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+Rx.swift"; sourceTree = "<group>"; };
 		20B3FC6729B07033009C7C36 /* AgeLimit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgeLimit.swift; sourceTree = "<group>"; };
 		20B3FC6929B07056009C7C36 /* ReviewInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewInfo.swift; sourceTree = "<group>"; };
 		20BB8C182963B40300801668 /* ReviewFirebaseUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewFirebaseUseCase.swift; sourceTree = "<group>"; };
@@ -291,6 +293,7 @@
 				AF85E0B4296571A300A22732 /* Date+Extension.swift */,
 				203F2A15299F1D7F00500EF4 /* String+Extension.swift */,
 				20F8D4762968396900FA77BA /* UIViewController+.swift */,
+				20B170AF29B96A8B00491901 /* URLSession+Rx.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -687,6 +690,7 @@
 				20F8D473296816DF00FA77BA /* ReviewListViewController.swift in Sources */,
 				AF22D9F0296836170059075F /* ActorListTransitioningDelegate.swift in Sources */,
 				2011FA3629B4E17B0031A50A /* BoxOfficeRepository.swift in Sources */,
+				20B170B029B96A8B00491901 /* URLSession+Rx.swift in Sources */,
 				AF85E0A92965156A00A22732 /* ModeSelectPresentationController.swift in Sources */,
 				2011FA2929B4D3010031A50A /* DailyBoxOfficeDTO.swift in Sources */,
 				209B381A29B5C57900F8E289 /* WeekendBoxOfficeUseCase.swift in Sources */,

@@ -9,19 +9,13 @@ import UIKit
 import RxSwift
 
 struct PosterRepository {
-    private let imageCacheManager: URLCacheManager
-    
-    init(imageCacheManager: URLCacheManager = .shared) {
-        self.imageCacheManager = imageCacheManager
-    }
-    
     func fetchPoster(with movieInfoList: Observable<MovieInfo>) -> Observable<UIImage?> {
         let posterList = movieInfoList.concatMap { movieInfo in
             fetchMoviePosterURL(with: movieInfo.movieNmEn,
                                 year: String(movieInfo.prdtYear.prefix(4)))
         }.concatMap { posterURL in
             if let url = posterURL {
-                return imageCacheManager.getImage(with: URL(string: url))
+                return URLSession.shared.rx.image(with: URL(string: url))
             }
             
             return Observable<UIImage?>.just(BoxOfficeImage.posterPlacehorder)

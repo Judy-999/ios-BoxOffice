@@ -15,26 +15,13 @@ protocol API {
 }
 
 extension API {
-    func execute(using cache: URLCacheManager = URLCacheManager.shared) -> Observable<ResponseType> {
+    func execute() -> Observable<ResponseType> {
         guard let urlRequest = configuration.urlRequest else {
             return Observable<ResponseType>.empty()
         }
         
-        if let data = cache.getDataFromCache(with: urlRequest) {
-            return Observable.just(data)
-                .map {
-                    return try JSONDecoder().decode(ResponseType.self, from: $0)
-                }
-        }
-        
-        return URLSession.shared.rx.response(request: urlRequest)
-            .filter { response, data in
-                200..<400 ~= response.statusCode
-            }
-            .do(onNext: { response, data in
-                cache.saveDataInCache(with: urlRequest, response, data)
-            })
-            .map { _, data in
+        return URLSession.shared.rx.data(request: urlRequest)
+            .map { data in
                 return try JSONDecoder().decode(ResponseType.self, from: data)
             }
     }
