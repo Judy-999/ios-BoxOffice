@@ -23,8 +23,6 @@
 		2032020629630EED00097F31 /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2032020529630EED00097F31 /* FirebaseFirestoreSwift */; };
 		2032020829630EED00097F31 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 2032020729630EED00097F31 /* FirebaseStorage */; };
 		203F2A16299F1D7F00500EF4 /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203F2A15299F1D7F00500EF4 /* String+Extension.swift */; };
-		20443791297A7A0900B05D48 /* MovieRequestBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20443790297A7A0900B05D48 /* MovieRequestBuilder.swift */; };
-		20443793297A876A00B05D48 /* MovieRequestDirector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20443792297A876A00B05D48 /* MovieRequestDirector.swift */; };
 		2056825629A59531008FA266 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 2056825529A59531008FA266 /* RxCocoa */; };
 		2056825829A59531008FA266 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 2056825729A59531008FA266 /* RxRelay */; };
 		2056825A29A59531008FA266 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2056825929A59531008FA266 /* RxSwift */; };
@@ -99,8 +97,6 @@
 		201C77C329A618F200CC64CB /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		201C827D2966F7F70060054B /* MovieLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLabel.swift; sourceTree = "<group>"; };
 		203F2A15299F1D7F00500EF4 /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
-		20443790297A7A0900B05D48 /* MovieRequestBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieRequestBuilder.swift; sourceTree = "<group>"; };
-		20443792297A876A00B05D48 /* MovieRequestDirector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieRequestDirector.swift; sourceTree = "<group>"; };
 		2073EB16296311F100216565 /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		2073EB1B29631F8C00216565 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		209B381729B5C55E00F8E289 /* WeeklyBoxOfficeUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyBoxOfficeUseCase.swift; sourceTree = "<group>"; };
@@ -539,8 +535,6 @@
 				AF6C3A4C2962D74E0074574D /* WeeklyBoxOfficeAPI.swift */,
 				AF6C3A4E2962D79D0074574D /* MovieInfoAPI.swift */,
 				AF6C3A502962D7E20074574D /* MoviePosterAPI.swift */,
-				20443790297A7A0900B05D48 /* MovieRequestBuilder.swift */,
-				20443792297A876A00B05D48 /* MovieRequestDirector.swift */,
 			);
 			path = APIs;
 			sourceTree = "<group>";
@@ -659,7 +653,6 @@
 				AF12A4752965963A008C484B /* CalendarTransitioningDelegate.swift in Sources */,
 				2011FA2D29B4D49C0031A50A /* MovieInfoDTO.swift in Sources */,
 				AFB6BB73296413B300386D14 /* HomeCollectionView.swift in Sources */,
-				20443791297A7A0900B05D48 /* MovieRequestBuilder.swift in Sources */,
 				209B381C29B5C59300F8E289 /* DailyBoxOfficeUseCase.swift in Sources */,
 				AFB6BB7729646B6400386D14 /* ModeSelectViewController.swift in Sources */,
 				20F8D4772968396900FA77BA /* UIViewController+.swift in Sources */,
@@ -673,7 +666,6 @@
 				20BB8C192963B40300801668 /* ReviewFirebaseUseCase.swift in Sources */,
 				AF6C3A552962EA0B0074574D /* Bundle+Extension.swift in Sources */,
 				201C827E2966F7F70060054B /* MovieLabel.swift in Sources */,
-				20443793297A876A00B05D48 /* MovieRequestDirector.swift in Sources */,
 				AF85E0B5296571A300A22732 /* Date+Extension.swift in Sources */,
 				AF6C3A442962D5E00074574D /* APIError.swift in Sources */,
 				AFB6BB712963C4AA00386D14 /* ListCell.swift in Sources */,
