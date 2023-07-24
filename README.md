@@ -10,14 +10,13 @@
 <br>
 
 ## 📜 프로젝트 및 개발자 소개
-> **소개** : 박스오피스와 영화 상세정보를 보고, 리뷰를 남길 수 있는 iOS 앱<br> **프로젝트 기간** : 23.01.02 ~ 23.01.06 / 23.01.20 ~ 개인 리팩토링 진행 중
+> **소개** : 박스오피스와 영화 상세정보를 보고, 리뷰를 남길 수 있는 iOS 앱<br> **프로젝트 기간** : 23.01.02 ~ 23.01.06 / 23.01.20 ~ 23.03 (리팩토링)
 <br>👉 [리팩토링 전 & 협업 기록이 담긴 repo 보러가기](https://github.com/Judy-999/ios-wanted-BoxOffice)
 
 |[Judy](https://github.com/Judy-999)|[웡빙](https://github.com/wongbingg)|
 |:---:|:---:|
-|<img src = "https://i.imgur.com/n304TQO.jpg" width="250" height="250"> | <img src = "https://i.imgur.com/fQDo8rV.jpg" width="250" height="250">|
-|`Firestore`,`리뷰화면`, `상세화면`|`async-await`, `API`, `홈화면`| 
-
+|<img src = "https://github.com/Judy-999/ios-BoxOffice/assets/102353787/ebd9c08c-c5ac-4b51-8dd5-795a4282e31a" width="250" height="250"> | <img src = "https://i.imgur.com/fQDo8rV.jpg" width="250" height="250">|
+|`Firestore`,`리뷰화면`, `상세화면` <br>+ 전체적인 리팩토링 진행|`async-await`, `API`, `홈화면`| 
 
 <br>
 
